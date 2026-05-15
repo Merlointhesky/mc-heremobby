@@ -1,0 +1,17 @@
+{
+  "id": "giant_zombie",
+  "displayName": "§4§lThe Colossus",
+  "baseType": "GIANT",
+  "location": {
+    "world": "world",
+    "x": 0.0,
+    "y": 100.0,
+    "z": 0.0
+  },
+  "respawnSeconds": 3600,
+  "kroinReward": 100,
+  "customLoot": [
+    { "material": "DIAMOND_BLOCK", "minAmount": 1, "maxAmount": 2, "chance": 1.0 },
+    { "material": "ENCHANTED_GOLDEN_APPLE", "minAmount": 1, "maxAmount": 1, "chance": 0.5 }
+  ]
+}

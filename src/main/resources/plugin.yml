@@ -1,0 +1,15 @@
+name: HereMobby
+version: 1.0.0
+main: com.heremobby.heremobby.HereMobbyPlugin
+api-version: '1.21'
+commands:
+  heremobby:
+    description: Main command for HereMobby
+    usage: /<command> [info|shop|reload]
+permissions:
+  heremobby.use:
+    description: Allows use of heremobby commands
+    default: true
+  heremobby.admin:
+    description: Allows administrative heremobby commands
+    default: op

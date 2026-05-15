@@ -1,0 +1,21 @@
+{
+  "displayName": "Skeleton Warrior",
+  "baseType": "SKELETON",
+  "equipment": {
+    "mainHand": "IRON_SWORD",
+    "helmet": "IRON_HELMET",
+    "chestplate": "IRON_CHESTPLATE"
+  },
+  "spawnConditions": {
+    "biomes": ["PLAINS", "FOREST"],
+    "time": "NIGHT",
+    "chance": 0.1,
+    "minLight": 0,
+    "maxLight": 7
+  },
+  "kroinReward": 5,
+  "customLoot": [
+    { "material": "IRON_INGOT", "minAmount": 1, "maxAmount": 2, "chance": 0.3 },
+    { "material": "BONE", "minAmount": 1, "maxAmount": 3, "chance": 1.0 }
+  ]
+}

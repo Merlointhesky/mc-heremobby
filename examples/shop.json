@@ -1,0 +1,10 @@
+{
+  "maxItems": 27,
+  "activeCategories": ["weapons", "armor", "materials", "custom"],
+  "enchants": {
+    "chance": 0.3,
+    "maxEnchants": 3,
+    "maxLevel": 5
+  },
+  "refreshCost": 50
+}

@@ -1,0 +1,11 @@
+{
+  "name": "§6§lGod Sword",
+  "material": "GOLDEN_SWORD",
+  "enchants": {
+    "sharpness": 10,
+    "unbreaking": 5,
+    "fire_aspect": 2
+  },
+  "sellable": true,
+  "customPrice": 5000
+}

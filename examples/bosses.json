@@ -1,0 +1,17 @@
+{
+  "overrides": {
+    "ENDER_DRAGON": {
+      "kroinReward": 100,
+      "customLoot": [
+        { "material": "DRAGON_BREATH", "minAmount": 5, "maxAmount": 10, "chance": 1.0 },
+        { "material": "ELYTRA", "minAmount": 1, "maxAmount": 1, "chance": 0.2 }
+      ]
+    },
+    "WITHER": {
+      "kroinReward": 50,
+      "customLoot": [
+        { "material": "NETHER_STAR", "minAmount": 1, "maxAmount": 1, "chance": 1.0 }
+      ]
+    }
+  }
+}

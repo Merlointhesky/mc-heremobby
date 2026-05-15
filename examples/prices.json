@@ -1,0 +1,30 @@
+{
+  "categories": {
+    "weapons": {
+      "WOODEN_SWORD": 10,
+      "STONE_SWORD": 25,
+      "IRON_SWORD": 100,
+      "DIAMOND_SWORD": 500,
+      "NETHERITE_SWORD": 2000
+    },
+    "armor": {
+      "LEATHER_CHESTPLATE": 20,
+      "IRON_CHESTPLATE": 150,
+      "DIAMOND_CHESTPLATE": 800,
+      "NETHERITE_CHESTPLATE": 3000
+    },
+    "materials": {
+      "COAL": 5,
+      "IRON_INGOT": 20,
+      "GOLD_INGOT": 50,
+      "DIAMOND": 200,
+      "NETHERITE_INGOT": 1000
+    }
+  },
+  "enchantments": {
+    "sharpness": { "baseValue": 50, "levelMultiplier": 1.2 },
+    "protection": { "baseValue": 50, "levelMultiplier": 1.2 },
+    "unbreaking": { "baseValue": 30, "levelMultiplier": 1.1 },
+    "efficiency": { "baseValue": 40, "levelMultiplier": 1.1 }
+  }
+}

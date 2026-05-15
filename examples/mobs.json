@@ -1,0 +1,17 @@
+{
+  "overrides": {
+    "ZOMBIE": {
+      "kroinReward": 2,
+      "customLoot": [
+        { "material": "ROTTEN_FLESH", "minAmount": 1, "maxAmount": 5, "chance": 1.0 },
+        { "material": "IRON_INGOT", "minAmount": 1, "maxAmount": 1, "chance": 0.05 }
+      ]
+    },
+    "CREEPER": {
+      "kroinReward": 3,
+      "customLoot": [
+        { "material": "GUNPOWDER", "minAmount": 1, "maxAmount": 3, "chance": 1.0 }
+      ]
+    }
+  }
+}
