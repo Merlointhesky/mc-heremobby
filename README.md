@@ -13,8 +13,8 @@ A [Paper](https://papermc.io) Minecraft plugin for **mob management** — manage
   - Enchanted items are generated automatically (**cursed enchantments are always excluded**).
   - Refresh logic: Use a Lever icon to refresh the shop for a cost. The shop remains persistent between opens until manually refreshed or reloaded.
   - Balance display: View your current Kroin balance directly in the GUI.
-- **Custom Mobs**: Create new entity types with custom equipment, display names, and specific spawn conditions (biomes, time, light level, chance).
-- **Custom Bosses**: Define static boss entities with persistent respawn timers that survive server restarts.
+- **Custom Mobs**: Create new entity types with custom equipment, display names, scale, and specific spawn conditions (biomes, time, light level, chance).
+- **Custom Bosses**: Define static boss entities with persistent respawn timers and custom scale that survive server restarts.
 - **Standard Overrides**: Override rewards and loot tables for vanilla Minecraft mobs and bosses via JSON.
 - **Information GUI**: View detailed information about mobs, loot, and your currency via `/heremobby info`.
 
@@ -51,6 +51,7 @@ build/libs/HereMobby-1.0.0.jar
 |---------|-------------|------------|
 | `/heremobby info` | Open the mob information GUI | `heremobby.use` |
 | `/heremobby shop` | Open the Kroin shop GUI | `heremobby.use` |
+| `/heremobby spawn <id>` | Spawn a custom mob or boss | `heremobby.admin` |
 | `/heremobby reload` | Reload configuration files | `heremobby.admin` |
 
 | Permission | Description | Default |

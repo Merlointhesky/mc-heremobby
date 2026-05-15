@@ -1,0 +1,22 @@
+{
+  "id": "ender_dragon",
+  "displayName": "§5§lEnder Dragon",
+  "baseType": "ENDER_DRAGON",
+  "scale": 1.0,
+  "location": {
+    "world": "world_the_end",
+    "x": 0.0,
+    "y": 64.0,
+    "z": 0.0
+  },
+  "respawnSeconds": 86400,
+  "kroinReward": 100,
+  "customLoot": [
+    {
+      "material": "DRAGON_EGG",
+      "minAmount": 1,
+      "maxAmount": 1,
+      "chance": 1.0
+    }
+  ]
+}

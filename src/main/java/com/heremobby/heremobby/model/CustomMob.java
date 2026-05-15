@@ -9,6 +9,7 @@ public class CustomMob {
     private Equipment equipment;
     private SpawnConditions spawnConditions;
     private long kroinReward = 1;
+    private double scale = 1.0;
     private List<LootItem> customLoot;
 
     public String getDisplayName() {
@@ -29,6 +30,10 @@ public class CustomMob {
 
     public long getKroinReward() {
         return kroinReward;
+    }
+
+    public double getScale() {
+        return scale;
     }
 
     public List<LootItem> getCustomLoot() {

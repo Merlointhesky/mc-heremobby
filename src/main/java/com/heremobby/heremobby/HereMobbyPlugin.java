@@ -43,7 +43,9 @@ public class HereMobbyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InfoListener(), this);
 
         // Register Commands
-        getCommand("heremobby").setExecutor(new HereMobbyCommand(this.infoGUI, this.shopGUI, this.dataManager, this.shopManager));
+        HereMobbyCommand cmd = new HereMobbyCommand(this.infoGUI, this.shopGUI, this.dataManager, this.shopManager, this.mobManager);
+        getCommand("heremobby").setExecutor(cmd);
+        getCommand("heremobby").setTabCompleter(cmd);
         
         getLogger().info("HereMobby has been enabled!");
     }

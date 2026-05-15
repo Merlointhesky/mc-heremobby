@@ -1,0 +1,19 @@
+{
+  "id": "giant_chicken",
+  "displayName": "§e§lMother Hen",
+  "baseType": "CHICKEN",
+  "scale": 5.0,
+  "location": {
+    "world": "world",
+    "x": 100.0,
+    "y": 70.0,
+    "z": 100.0
+  },
+  "respawnSeconds": 3600,
+  "kroinReward": 50,
+  "customLoot": [
+    { "material": "EGG", "minAmount": 16, "maxAmount": 64, "chance": 1.0 },
+    { "material": "COOKED_CHICKEN", "minAmount": 10, "maxAmount": 20, "chance": 1.0 },
+    { "material": "FEATHER", "minAmount": 20, "maxAmount": 50, "chance": 1.0 }
+  ]
+}

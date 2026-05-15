@@ -8,6 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -43,6 +45,7 @@ public class MobManager {
         }
 
         applyEquipment(entity, config.getEquipment());
+        applyScale(entity, config.getScale());
         entity.getPersistentDataContainer().set(customMobKey, PersistentDataType.STRING, config.getDisplayName());
     }
 
@@ -60,6 +63,7 @@ public class MobManager {
         }
 
         applyEquipment(entity, config.getEquipment());
+        applyScale(entity, config.getScale());
         entity.getPersistentDataContainer().set(customBossKey, PersistentDataType.STRING, config.getId());
     }
 
@@ -74,6 +78,14 @@ public class MobManager {
         if (equip.getChestplate() != null) ee.setChestplate(createItem(equip.getChestplate()));
         if (equip.getLeggings() != null) ee.setLeggings(createItem(equip.getLeggings()));
         if (equip.getBoots() != null) ee.setBoots(createItem(equip.getBoots()));
+    }
+
+    private void applyScale(LivingEntity entity, double scale) {
+        if (scale == 1.0) return;
+        AttributeInstance scaleAttr = entity.getAttribute(Attribute.SCALE);
+        if (scaleAttr != null) {
+            scaleAttr.setBaseValue(scale);
+        }
     }
 
     private ItemStack createItem(String materialName) {
