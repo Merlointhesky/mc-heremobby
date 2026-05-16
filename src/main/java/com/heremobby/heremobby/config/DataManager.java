@@ -6,7 +6,6 @@ import com.heremobby.heremobby.HereMobbyPlugin;
 import com.heremobby.heremobby.model.*;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +13,6 @@ public class DataManager {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final HereMobbyPlugin plugin;
     
-    private BankData bankData;
-    private PricesData pricesData;
-    private ShopData shopData;
     private BossState bossState;
     private StandardOverrides standardMobOverrides;
     private StandardOverrides standardBossOverrides;
@@ -30,9 +26,6 @@ public class DataManager {
     }
 
     public void reload() {
-        this.bankData = loadFile("bank.json", BankData.class, new BankData());
-        this.pricesData = loadFile("prices.json", PricesData.class, new PricesData());
-        this.shopData = loadFile("shop.json", ShopData.class, new ShopData());
         this.bossState = loadFile("boss_state.json", BossState.class, new BossState());
         this.standardMobOverrides = loadFile("mobs.json", StandardOverrides.class, new StandardOverrides());
         this.standardBossOverrides = loadFile("bosses.json", StandardOverrides.class, new StandardOverrides());
@@ -93,9 +86,6 @@ public class DataManager {
         return list;
     }
 
-    public BankData getBankData() { return bankData; }
-    public PricesData getPricesData() { return pricesData; }
-    public ShopData getShopData() { return shopData; }
     public BossState getBossState() { return bossState; }
     public StandardOverrides getStandardMobOverrides() { return standardMobOverrides; }
     public StandardOverrides getStandardBossOverrides() { return standardBossOverrides; }
@@ -103,6 +93,5 @@ public class DataManager {
     public List<CustomMob> getCustomMobs() { return customMobs; }
     public List<CustomBoss> getCustomBosses() { return customBosses; }
 
-    public void saveBank() { saveFile("bank.json", bankData); }
     public void saveBossState() { saveFile("boss_state.json", bossState); }
 }

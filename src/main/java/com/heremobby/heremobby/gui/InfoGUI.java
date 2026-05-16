@@ -1,7 +1,6 @@
 package com.heremobby.heremobby.gui;
 
 import com.heremobby.heremobby.config.DataManager;
-import com.heremobby.heremobby.economy.BankManager;
 import com.heremobby.heremobby.model.CustomMob;
 import com.heremobby.heremobby.model.CustomBoss;
 import org.bukkit.Bukkit;
@@ -16,22 +15,20 @@ import java.util.List;
 
 public class InfoGUI {
     private final DataManager dataManager;
-    private final BankManager bankManager;
 
-    public InfoGUI(DataManager dataManager, BankManager bankManager) {
+    public InfoGUI(DataManager dataManager) {
         this.dataManager = dataManager;
-        this.bankManager = bankManager;
     }
 
     public void open(Player player) {
         Inventory inv = Bukkit.createInventory(null, 54, "§6HereMobby Info");
 
-        // Player Info
+        // Player Info (Minimal now as HereShoppy handles economy)
         ItemStack playerInfo = new ItemStack(Material.PLAYER_HEAD);
         ItemMeta pMeta = playerInfo.getItemMeta();
-        pMeta.setDisplayName("§e" + player.getName() + "'s Stats");
+        pMeta.setDisplayName("§e" + player.getName());
         List<String> pLore = new ArrayList<>();
-        pLore.add("§7Balance: §6" + bankManager.getBalance(player.getUniqueId()) + " Kroins");
+        pLore.add("§7Use §f/hereshoppy info §7for economy stats.");
         pMeta.setLore(pLore);
         playerInfo.setItemMeta(pMeta);
         inv.setItem(4, playerInfo);
@@ -40,7 +37,8 @@ public class InfoGUI {
         int slot = 9;
         for (CustomMob mob : dataManager.getCustomMobs()) {
             if (slot >= 27) break;
-            ItemStack item = new ItemStack(Material.matchMaterial(mob.getBaseType()) != null ? Material.matchMaterial(mob.getBaseType()) : Material.ZOMBIE_SPAWN_EGG);
+            Material mat = Material.matchMaterial(mob.getBaseType());
+            ItemStack item = new ItemStack(mat != null ? mat : Material.ZOMBIE_SPAWN_EGG);
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName("§b" + (mob.getDisplayName() != null ? mob.getDisplayName() : mob.getBaseType()));
             List<String> lore = new ArrayList<>();

@@ -2,8 +2,6 @@ package com.heremobby.heremobby.command;
 
 import com.heremobby.heremobby.config.DataManager;
 import com.heremobby.heremobby.gui.InfoGUI;
-import com.heremobby.heremobby.shop.ShopGUI;
-import com.heremobby.heremobby.shop.ShopManager;
 import com.heremobby.heremobby.mob.MobManager;
 import com.heremobby.heremobby.model.CustomBoss;
 import com.heremobby.heremobby.model.CustomMob;
@@ -22,16 +20,12 @@ import java.util.stream.Collectors;
 
 public class HereMobbyCommand implements CommandExecutor, TabCompleter {
     private final InfoGUI infoGUI;
-    private final ShopGUI shopGUI;
     private final DataManager dataManager;
-    private final ShopManager shopManager;
     private final MobManager mobManager;
 
-    public HereMobbyCommand(InfoGUI infoGUI, ShopGUI shopGUI, DataManager dataManager, ShopManager shopManager, MobManager mobManager) {
+    public HereMobbyCommand(InfoGUI infoGUI, DataManager dataManager, MobManager mobManager) {
         this.infoGUI = infoGUI;
-        this.shopGUI = shopGUI;
         this.dataManager = dataManager;
-        this.shopManager = shopManager;
         this.mobManager = mobManager;
     }
 
@@ -56,20 +50,12 @@ public class HereMobbyCommand implements CommandExecutor, TabCompleter {
                 }
                 infoGUI.open(player);
                 break;
-            case "shop":
-                if (!player.hasPermission("heremobby.use")) {
-                    player.sendMessage("§cYou don't have permission!");
-                    return true;
-                }
-                shopGUI.open(player);
-                break;
             case "reload":
                 if (!player.hasPermission("heremobby.admin")) {
                     player.sendMessage("§cYou don't have permission!");
                     return true;
                 }
                 dataManager.reload();
-                shopManager.refreshShop();
                 player.sendMessage("§aHereMobby configuration reloaded!");
                 break;
             case "spawn":
@@ -108,7 +94,7 @@ public class HereMobbyCommand implements CommandExecutor, TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("info", "shop", "reload", "spawn").stream()
+            return Arrays.asList("info", "reload", "spawn").stream()
                     .filter(s -> s.startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }

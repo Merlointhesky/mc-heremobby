@@ -2,6 +2,7 @@ name: HereMobby
 version: 1.0.0
 main: com.heremobby.heremobby.HereMobbyPlugin
 api-version: '1.21'
+softdepend: [HereShoppy]
 commands:
   heremobby:
     description: Main command for HereMobby

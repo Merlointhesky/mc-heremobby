@@ -1,10 +1,10 @@
 package com.heremobby.heremobby.listener;
 
-import com.heremobby.heremobby.economy.BankManager;
 import com.heremobby.heremobby.mob.MobManager;
 import com.heremobby.heremobby.model.CustomBoss;
 import com.heremobby.heremobby.model.CustomMob;
 import com.heremobby.heremobby.config.DataManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -20,15 +20,15 @@ import java.util.List;
 import java.util.Random;
 
 public class MobListener implements Listener {
-    private final BankManager bankManager;
     private final MobManager mobManager;
     private final DataManager dataManager;
     private final Random random = new Random();
+    private final boolean hereShoppyEnabled;
 
-    public MobListener(BankManager bankManager, MobManager mobManager, DataManager dataManager) {
-        this.bankManager = bankManager;
+    public MobListener(MobManager mobManager, DataManager dataManager) {
         this.mobManager = mobManager;
         this.dataManager = dataManager;
+        this.hereShoppyEnabled = Bukkit.getPluginManager().isPluginEnabled("HereShoppy");
     }
 
     @EventHandler
@@ -36,7 +36,7 @@ public class MobListener implements Listener {
         LivingEntity entity = event.getEntity();
         Player killer = entity.getKiller();
 
-        long reward = 1; // Default
+        double reward = 2.0; // Default standard mob reward
         List<CustomMob.LootItem> customLoot = null;
 
         // Check if it's a custom boss
@@ -63,14 +63,18 @@ public class MobListener implements Listener {
                     reward = override.getKroinReward();
                     customLoot = override.getCustomLoot();
                 } else if (isStandardBoss) {
-                    reward = 20;
+                    reward = 2000.0;
                 }
             }
         }
 
-        if (killer != null) {
-            bankManager.addBalance(killer.getUniqueId(), reward);
-            killer.sendMessage("§aYou earned §e" + reward + " Kroins §afor defeating " + entity.getName() + "!");
+        if (killer != null && hereShoppyEnabled) {
+            try {
+                com.hereshoppy.hereshoppy.api.HereshoppyAPI.addKroins(killer.getUniqueId(), reward);
+                killer.sendMessage("§aYou earned §e" + String.format("%.2f", reward) + " Kroins §afor defeating " + entity.getName() + "!");
+            } catch (NoClassDefFoundError ignored) {
+                // HereShoppy might have been disabled after start
+            }
         }
 
         if (customLoot != null) {
