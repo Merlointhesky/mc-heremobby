@@ -46,6 +46,7 @@ public class MobListener implements Listener {
             customLoot = bossConfig.get().getCustomLoot();
             dataManager.getBossState().setLastDeath(bossConfig.get().getId(), System.currentTimeMillis());
             dataManager.saveBossState();
+            mobManager.removeActiveBoss(entity.getUniqueId());
         } else {
             // Check if it's a custom mob
             var mobConfig = mobManager.getCustomMobConfig(entity);

@@ -18,13 +18,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.NamespacedKey;
 
+import com.destroystokyo.paper.entity.ai.GoalType;
+import com.heremobby.heremobby.mob.goal.*;
+import org.bukkit.entity.Mob;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public class MobManager {
     private final HereMobbyPlugin plugin;
     private final DataManager dataManager;
     private final NamespacedKey customMobKey;
     private final NamespacedKey customBossKey;
+    private final Map<UUID, ActiveBoss> activeBosses = new HashMap<>();
 
     public MobManager(HereMobbyPlugin plugin, DataManager dataManager) {
         this.plugin = plugin;
@@ -65,6 +72,33 @@ public class MobManager {
         applyEquipment(entity, config.getEquipment());
         applyScale(entity, config.getScale());
         entity.getPersistentDataContainer().set(customBossKey, PersistentDataType.STRING, config.getId());
+
+        // Clear Vanilla AI and register as ActiveBoss
+        if (entity instanceof Mob mob) {
+            Bukkit.getMobGoals().removeAllGoals(mob);
+            ActiveBoss activeBoss = new ActiveBoss(mob);
+            activeBosses.put(mob.getUniqueId(), activeBoss);
+            
+            // Assign custom goals for the boss
+            var goals = Bukkit.getMobGoals();
+            goals.addGoal(mob, 1, new TargetNearestPlayerGoal(plugin, mob));
+            goals.addGoal(mob, 2, new MoveToTargetGoal(plugin, mob, 1.2));
+            goals.addGoal(mob, 3, new FlamethrowerGoal(plugin, activeBoss));
+            goals.addGoal(mob, 3, new ThunderwaveGoal(plugin, activeBoss));
+            goals.addGoal(mob, 3, new MageHandGoal(plugin, activeBoss));
+            goals.addGoal(mob, 3, new LightningBoltGoal(plugin, activeBoss));
+            goals.addGoal(mob, 3, new RainOfFireGoal(plugin, activeBoss));
+            goals.addGoal(mob, 3, new GravityDropGoal(plugin, activeBoss));
+            goals.addGoal(mob, 3, new VineWhipGoal(plugin, activeBoss));
+        }
+    }
+
+    public ActiveBoss getActiveBoss(Entity entity) {
+        return activeBosses.get(entity.getUniqueId());
+    }
+
+    public void removeActiveBoss(UUID uuid) {
+        activeBosses.remove(uuid);
     }
 
     private void applyEquipment(LivingEntity entity, CustomMob.Equipment equip) {

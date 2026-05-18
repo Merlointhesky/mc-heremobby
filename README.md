@@ -51,9 +51,9 @@ build/libs/HereMobby-1.0.0.jar
 | `heremobby.use` | Allows use of player commands | `true` |
 | `heremobby.admin` | Allows use of admin commands | `op` |
 
-## Configuration (JSON)
+## Configuration & Spells
 
-Detailed documentation on how to override default mobs and create custom ones can be found in the `examples/` directory and via the plugin's internal GUIs.
+Detailed documentation on configuration, custom mobs/bosses, and the spellcasting system can be found in [DOCS.md](DOCS.md).
 
 ### Data Files
 - `boss_state.json`: Internal persistence for last death timestamps.

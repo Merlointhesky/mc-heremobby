@@ -4,7 +4,9 @@ import com.heremobby.heremobby.command.HereMobbyCommand;
 import com.heremobby.heremobby.config.DataManager;
 import com.heremobby.heremobby.gui.InfoGUI;
 import com.heremobby.heremobby.gui.InfoListener;
+import com.heremobby.heremobby.listener.BossPoiseListener;
 import com.heremobby.heremobby.listener.MobListener;
+import com.heremobby.heremobby.listener.SpellListener;
 import com.heremobby.heremobby.mob.MobManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,6 +31,8 @@ public class HereMobbyPlugin extends JavaPlugin {
         // Register Listeners
         getServer().getPluginManager().registerEvents(new MobListener(this.mobManager, this.dataManager), this);
         getServer().getPluginManager().registerEvents(new InfoListener(), this);
+        getServer().getPluginManager().registerEvents(new SpellListener(this), this);
+        getServer().getPluginManager().registerEvents(new BossPoiseListener(this.mobManager), this);
 
         // Register Commands
         HereMobbyCommand cmd = new HereMobbyCommand(this.infoGUI, this.dataManager, this.mobManager);
