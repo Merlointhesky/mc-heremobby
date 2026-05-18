@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CustomMob {
+    private String id;
     private String displayName;
     private String baseType; // e.g., ZOMBIE
     private Equipment equipment;
@@ -11,6 +12,14 @@ public class CustomMob {
     private long kroinReward = 1;
     private double scale = 1.0;
     private List<LootItem> customLoot;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getDisplayName() {
         return displayName;

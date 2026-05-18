@@ -46,7 +46,7 @@ public class MobManager {
 
         applyEquipment(entity, config.getEquipment());
         applyScale(entity, config.getScale());
-        entity.getPersistentDataContainer().set(customMobKey, PersistentDataType.STRING, config.getDisplayName());
+        entity.getPersistentDataContainer().set(customMobKey, PersistentDataType.STRING, config.getId());
     }
 
     public void spawnCustomBoss(CustomBoss config) {
@@ -94,9 +94,9 @@ public class MobManager {
     }
 
     public Optional<CustomMob> getCustomMobConfig(Entity entity) {
-        String name = entity.getPersistentDataContainer().get(customMobKey, PersistentDataType.STRING);
-        if (name == null) return Optional.empty();
-        return dataManager.getCustomMobs().stream().filter(m -> m.getDisplayName().equals(name)).findFirst();
+        String id = entity.getPersistentDataContainer().get(customMobKey, PersistentDataType.STRING);
+        if (id == null) return Optional.empty();
+        return dataManager.getCustomMobs().stream().filter(m -> m.getId().equals(id)).findFirst();
     }
 
     public Optional<CustomBoss> getCustomBossConfig(Entity entity) {

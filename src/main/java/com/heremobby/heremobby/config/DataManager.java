@@ -77,7 +77,12 @@ public class DataManager {
             for (File file : files) {
                 try (Reader reader = new FileReader(file)) {
                     T item = GSON.fromJson(reader, clazz);
-                    if (item != null) list.add(item);
+                    if (item != null) {
+                        if (item instanceof CustomMob mob) {
+                            mob.setId(file.getName().replace(".json", ""));
+                        }
+                        list.add(item);
+                    }
                 } catch (IOException e) {
                     plugin.getLogger().severe("Could not load " + file.getName() + " from " + dirName + ": " + e.getMessage());
                 }

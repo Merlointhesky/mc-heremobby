@@ -76,7 +76,7 @@ public class HereMobbyCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
                 // Check custom mobs
-                var mob = dataManager.getCustomMobs().stream().filter(m -> m.getDisplayName().equalsIgnoreCase(id)).findFirst();
+                var mob = dataManager.getCustomMobs().stream().filter(m -> m.getId().equalsIgnoreCase(id)).findFirst();
                 if (mob.isPresent()) {
                     mobManager.spawnCustomMob(mob.get(), player.getLocation());
                     player.sendMessage("§aSpawned custom mob: " + mob.get().getDisplayName());
@@ -101,7 +101,7 @@ public class HereMobbyCommand implements CommandExecutor, TabCompleter {
         if (args.length == 2 && args[0].equalsIgnoreCase("spawn")) {
             List<String> options = new ArrayList<>();
             options.addAll(dataManager.getCustomBosses().stream().map(CustomBoss::getId).collect(Collectors.toList()));
-            options.addAll(dataManager.getCustomMobs().stream().map(CustomMob::getDisplayName).collect(Collectors.toList()));
+            options.addAll(dataManager.getCustomMobs().stream().map(CustomMob::getId).collect(Collectors.toList()));
             return options.stream()
                     .filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase()))
                     .collect(Collectors.toList());
