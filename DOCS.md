@@ -39,6 +39,8 @@ Custom entities are defined in the `custom_mobs/` and `custom_bosses/` directori
     "helmet": "IRON_HELMET"
   },
   "scale": 1.2,
+  "maxHealth": 40.0,
+  "defense": 0.1,
   "kroinReward": 50,
   "spawnConditions": {
     "chance": 0.05,
@@ -51,13 +53,15 @@ Custom entities are defined in the `custom_mobs/` and `custom_bosses/` directori
 ```
 
 ### Custom Boss Example (`custom_bosses/giant_zombie.json`)
-Bosses are static entities that respawn at a specific location.
+Bosses are static entities that respawn at a specific location and display a **Boss Health Bar** at the top of the screen when players are nearby.
 ```json
 {
   "id": "giant_zombie",
   "displayName": "§4The Colossus",
   "baseType": "ZOMBIE",
   "scale": 5.0,
+  "maxHealth": 500.0,
+  "defense": 0.25,
   "kroinReward": 1000,
   "location": {
     "world": "world",
@@ -88,6 +92,14 @@ HereMobby integrates with **HereShoppy** for economy.
 ```
 
 
+## 4. Health and Defense
+
+Both custom mobs and bosses support custom health and defense values.
+
+- `maxHealth`: Sets the maximum health of the entity.
+- `defense`: Sets damage reduction as a percentage (e.g., `0.1` is 10% reduction, `0.5` is 50% reduction).
+
+
 ## 5. Spellcasting & Poise System (Advanced)
 
 HereMobby features a custom AI system for bosses.
@@ -103,6 +115,13 @@ Custom mobs and bosses can be configured with a list of spells. If a mob has spe
 - `RAIN_OF_FIRE`: Rains fireballs around the target.
 - `GRAVITY_DROP`: Lifts the target and drops them.
 - `VINE_WHIP`: Pulls the target towards the caster and deals damage.
+- `WATER_CANNON`: A stream of water that deals damage and knocks back.
+- `ENERGY_BALL`: A slow-moving projectile that explodes on impact.
+- `RAY_ATTACK`: A continuous beam that tracks the target.
+- `CHAIN_LIGHTNING`: Lightning that jumps between nearby players, dealing reduced damage each jump.
+- `TELEPORTATION`: Boss teleports to a random location near the target.
+- `SAND_RAIN`: Rains sand blocks on nearby players.
+- `ROCK_BLAST`: Shoots a rock that shatters into flint shards on impact.
 
 ### Examples
 
@@ -146,3 +165,26 @@ Bosses can be interrupted while channeling a spell. If a player deals significan
 1.  Cancel its current spell.
 2.  Enter a **Staggered** state (Slowness effect).
 3.  Play a glass-breaking sound and particle effect.
+
+## 6. Custom Equipment and Loot Drops
+
+To make a boss drop specific equipment, you should define it in the `customLoot` section.
+
+### Example: Boss with guaranteed drops
+```json
+{
+  "id": "king_skeleton",
+  "displayName": "§eSkeleton King",
+  "baseType": "SKELETON",
+  "equipment": {
+    "mainHand": "GOLDEN_SWORD",
+    "helmet": "GOLDEN_HELMET"
+  },
+  "customLoot": [
+    { "material": "GOLDEN_SWORD", "chance": 1.0, "minAmount": 1, "maxAmount": 1 },
+    { "material": "GOLDEN_HELMET", "chance": 0.5, "minAmount": 1, "maxAmount": 1 },
+    { "material": "DIAMOND", "chance": 0.1, "minAmount": 1, "maxAmount": 3 }
+  ]
+}
+```
+By adding the equipment materials to `customLoot` with a `1.0` chance, you ensure the boss always drops its "signature" gear.

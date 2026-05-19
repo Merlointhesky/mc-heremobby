@@ -11,6 +11,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.inventory.ItemStack;
@@ -29,6 +30,29 @@ public class MobListener implements Listener {
         this.mobManager = mobManager;
         this.dataManager = dataManager;
         this.hereShoppyEnabled = Bukkit.getPluginManager().isPluginEnabled("HereShoppy");
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof LivingEntity entity)) return;
+
+        double defense = 0;
+        var bossConfig = mobManager.getCustomBossConfig(entity);
+        if (bossConfig.isPresent()) {
+            defense = bossConfig.get().getDefense();
+        } else {
+            var mobConfig = mobManager.getCustomMobConfig(entity);
+            if (mobConfig.isPresent()) {
+                defense = mobConfig.get().getDefense();
+            }
+        }
+
+        if (defense > 0) {
+            // Treat defense as percentage reduction (e.g., 0.1 = 10% reduction)
+            double reduction = 1.0 - defense;
+            if (reduction < 0) reduction = 0;
+            event.setDamage(event.getDamage() * reduction);
+        }
     }
 
     @EventHandler

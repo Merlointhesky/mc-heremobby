@@ -10,6 +10,8 @@ public class CustomBoss {
     private List<CustomMob.LootItem> customLoot;
     private long kroinReward = 20;
     private double scale = 1.0;
+    private double maxHealth = -1;
+    private double defense = 0;
     private LocationData location;
     private int respawnSeconds;
     private List<String> spells;
@@ -21,6 +23,8 @@ public class CustomBoss {
     public List<CustomMob.LootItem> getCustomLoot() { return customLoot; }
     public long getKroinReward() { return kroinReward; }
     public double getScale() { return scale; }
+    public double getMaxHealth() { return maxHealth; }
+    public double getDefense() { return defense; }
     public LocationData getLocation() { return location; }
     public int getRespawnSeconds() { return respawnSeconds; }
     public List<String> getSpells() { return spells; }

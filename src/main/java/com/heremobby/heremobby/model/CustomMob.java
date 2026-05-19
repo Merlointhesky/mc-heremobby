@@ -11,6 +11,8 @@ public class CustomMob {
     private SpawnConditions spawnConditions;
     private long kroinReward = 1;
     private double scale = 1.0;
+    private double maxHealth = -1;
+    private double defense = 0;
     private List<LootItem> customLoot;
     private List<String> spells;
 
@@ -44,6 +46,14 @@ public class CustomMob {
 
     public double getScale() {
         return scale;
+    }
+
+    public double getMaxHealth() {
+        return maxHealth;
+    }
+
+    public double getDefense() {
+        return defense;
     }
 
     public List<LootItem> getCustomLoot() {

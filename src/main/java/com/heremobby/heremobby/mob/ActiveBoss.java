@@ -1,5 +1,6 @@
 package com.heremobby.heremobby.mob;
 
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Mob;
 import org.bukkit.scheduler.BukkitTask;
 import java.util.UUID;
@@ -13,9 +14,18 @@ public class ActiveBoss {
     private boolean isChanneling = false;
     private BukkitTask activeTask = null;
     private long lastSpellTime = 0;
+    private BossBar bossBar = null;
 
     public ActiveBoss(Mob entity) {
         this.entity = entity;
+    }
+
+    public BossBar getBossBar() {
+        return bossBar;
+    }
+
+    public void setBossBar(BossBar bossBar) {
+        this.bossBar = bossBar;
     }
 
     public long getLastSpellTime() {

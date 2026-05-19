@@ -17,6 +17,10 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.NamespacedKey;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
+import org.bukkit.entity.Player;
 
 import com.destroystokyo.paper.entity.ai.GoalType;
 import com.heremobby.heremobby.mob.goal.*;
@@ -40,6 +44,7 @@ public class MobManager {
         this.customBossKey = new NamespacedKey(plugin, "custom_boss");
         
         startBossRespawnTask();
+        startBossBarUpdateTask();
     }
 
     public void spawnCustomMob(CustomMob config, Location loc) {
@@ -53,6 +58,7 @@ public class MobManager {
 
         applyEquipment(entity, config.getEquipment());
         applyScale(entity, config.getScale());
+        applyHealth(entity, config.getMaxHealth());
         entity.getPersistentDataContainer().set(customMobKey, PersistentDataType.STRING, config.getId());
 
         if (entity instanceof Mob mob) {
@@ -100,6 +106,7 @@ public class MobManager {
 
         applyEquipment(entity, config.getEquipment());
         applyScale(entity, config.getScale());
+        applyHealth(entity, config.getMaxHealth());
         entity.getPersistentDataContainer().set(customBossKey, PersistentDataType.STRING, config.getId());
 
         // Clear Vanilla AI and register as ActiveBoss
@@ -114,6 +121,14 @@ public class MobManager {
 
             ActiveBoss activeBoss = new ActiveBoss(mob);
             activeBosses.put(mob.getUniqueId(), activeBoss);
+
+            // Create BossBar for bosses
+            BossBar bossBar = Bukkit.createBossBar(
+                config.getDisplayName() != null ? config.getDisplayName() : "Boss",
+                BarColor.RED,
+                BarStyle.SOLID
+            );
+            activeBoss.setBossBar(bossBar);
             
             // Assign custom goals for the boss
             var goals = Bukkit.getMobGoals();
@@ -144,6 +159,13 @@ public class MobManager {
             case "RAIN_OF_FIRE" -> goals.addGoal(mob, 3, new RainOfFireGoal(plugin, activeBoss));
             case "GRAVITY_DROP" -> goals.addGoal(mob, 3, new GravityDropGoal(plugin, activeBoss));
             case "VINE_WHIP" -> goals.addGoal(mob, 3, new VineWhipGoal(plugin, activeBoss));
+            case "WATER_CANNON" -> goals.addGoal(mob, 3, new WaterCannonGoal(plugin, activeBoss));
+            case "ENERGY_BALL" -> goals.addGoal(mob, 3, new EnergyBallGoal(plugin, activeBoss));
+            case "RAY_ATTACK" -> goals.addGoal(mob, 3, new RayAttackGoal(plugin, activeBoss));
+            case "CHAIN_LIGHTNING" -> goals.addGoal(mob, 3, new ChainLightningGoal(plugin, activeBoss));
+            case "TELEPORTATION" -> goals.addGoal(mob, 3, new TeleportationGoal(plugin, activeBoss));
+            case "SAND_RAIN" -> goals.addGoal(mob, 3, new SandRainGoal(plugin, activeBoss));
+            case "ROCK_BLAST" -> goals.addGoal(mob, 3, new RockBlastGoal(plugin, activeBoss));
         }
     }
 
@@ -152,7 +174,10 @@ public class MobManager {
     }
 
     public void removeActiveBoss(UUID uuid) {
-        activeBosses.remove(uuid);
+        ActiveBoss activeBoss = activeBosses.remove(uuid);
+        if (activeBoss != null && activeBoss.getBossBar() != null) {
+            activeBoss.getBossBar().removeAll();
+        }
     }
 
     private void applyEquipment(LivingEntity entity, CustomMob.Equipment equip) {
@@ -211,6 +236,44 @@ public class MobManager {
                 }
             }
         }, 200L, 200L); // Every 10 seconds
+    }
+
+    private void applyHealth(LivingEntity entity, double maxHealth) {
+        if (maxHealth <= 0) return;
+        AttributeInstance healthAttr = entity.getAttribute(Attribute.MAX_HEALTH);
+        if (healthAttr != null) {
+            healthAttr.setBaseValue(maxHealth);
+            entity.setHealth(maxHealth);
+        }
+    }
+
+    private void startBossBarUpdateTask() {
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            for (ActiveBoss activeBoss : activeBosses.values()) {
+                BossBar bossBar = activeBoss.getBossBar();
+                if (bossBar == null) continue;
+
+                Mob entity = activeBoss.getEntity();
+                if (!entity.isValid() || entity.isDead()) {
+                    bossBar.removeAll();
+                    continue;
+                }
+
+                // Update health progress
+                double health = entity.getHealth();
+                double maxHealth = entity.getAttribute(Attribute.MAX_HEALTH).getValue();
+                bossBar.setProgress(Math.max(0.0, Math.min(1.0, health / maxHealth)));
+
+                // Update players (within 30 blocks)
+                for (Player player : entity.getWorld().getPlayers()) {
+                    if (player.getLocation().distanceSquared(entity.getLocation()) < 900) {
+                        bossBar.addPlayer(player);
+                    } else {
+                        bossBar.removePlayer(player);
+                    }
+                }
+            }
+        }, 20L, 20L); // Every second
     }
 
     private boolean isBossAlive(String bossId) {
