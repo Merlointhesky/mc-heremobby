@@ -12,6 +12,7 @@ public class CustomBoss {
     private double scale = 1.0;
     private LocationData location;
     private int respawnSeconds;
+    private List<String> spells;
 
     public String getId() { return id; }
     public String getDisplayName() { return displayName; }
@@ -22,6 +23,7 @@ public class CustomBoss {
     public double getScale() { return scale; }
     public LocationData getLocation() { return location; }
     public int getRespawnSeconds() { return respawnSeconds; }
+    public List<String> getSpells() { return spells; }
 
     public static class LocationData {
         private String world;

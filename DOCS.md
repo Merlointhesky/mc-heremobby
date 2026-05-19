@@ -87,42 +87,59 @@ HereMobby integrates with **HereShoppy** for economy.
 }
 ```
 
-### Price Calculation
-When selling custom items via the Shop GUI (if enabled), the price is calculated as:
-`Base Price + (Enchantment Levels * Multiplier)`
-
-## 4. Default JSON Examples
-
-### `mobs.json` / `bosses.json` (Empty Template)
-```json
-{
-  "overrides": {}
-}
-```
-
-### `shop.json` (Default Structure)
-```json
-{
-  "categories": [
-    {
-      "id": "weapons",
-      "displayName": "Weapons",
-      "icon": "DIAMOND_SWORD",
-      "items": ["god_sword"]
-    }
-  ]
-}
-```
 
 ## 5. Spellcasting & Poise System (Advanced)
 
 HereMobby features a custom AI system for bosses.
 
 ### Spellcasting
-Bosses have access to custom spells like:
-- **Flamethrower**: A channeled fire attack.
-- **Thunderwave**: An AOE pushback and damage spell.
-- **Mage Hand**: Immobilizes the target for several seconds.
+Custom mobs and bosses can be configured with a list of spells. If a mob has spells, it will use a custom AI that targets the nearest player and cycles through its spells.
+
+#### Available Spells
+- `FLAMETHROWER`: A channeled fire attack.
+- `THUNDERWAVE`: An AOE pushback and damage spell.
+- `MAGE_HAND`: Immobilizes the target for several seconds.
+- `LIGHTNING_BOLT`: Strikes the target with lightning.
+- `RAIN_OF_FIRE`: Rains fireballs around the target.
+- `GRAVITY_DROP`: Lifts the target and drops them.
+- `VINE_WHIP`: Pulls the target towards the caster and deals damage.
+
+### Examples
+
+#### Custom Mob with Spells (`custom_mobs/fire_mage.json`)
+```json
+{
+  "id": "fire_mage",
+  "displayName": "§6Fire Mage",
+  "baseType": "WITCH",
+  "spells": ["FLAMETHROWER", "RAIN_OF_FIRE"],
+  "kroinReward": 75,
+  "spawnConditions": {
+    "chance": 0.02,
+    "biomes": ["DESERT", "NETHER_WASTES"],
+    "time": "BOTH"
+  }
+}
+```
+
+#### Custom Boss with Spells (`custom_bosses/lich_king.json`)
+```json
+{
+  "id": "lich_king",
+  "displayName": "§b§lThe Lich King",
+  "baseType": "WITHER_SKELETON",
+  "scale": 2.5,
+  "spells": ["MAGE_HAND", "LIGHTNING_BOLT", "THUNDERWAVE"],
+  "location": {
+    "world": "world",
+    "x": 500,
+    "y": 70,
+    "z": -500
+  },
+  "respawnSeconds": 1800,
+  "kroinReward": 5000
+}
+```
 
 ### The Poise System
 Bosses can be interrupted while channeling a spell. If a player deals significant damage (threshold: **8.0** final damage), the boss will:

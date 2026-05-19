@@ -12,6 +12,7 @@ public class CustomMob {
     private long kroinReward = 1;
     private double scale = 1.0;
     private List<LootItem> customLoot;
+    private List<String> spells;
 
     public String getId() {
         return id;
@@ -47,6 +48,10 @@ public class CustomMob {
 
     public List<LootItem> getCustomLoot() {
         return customLoot;
+    }
+
+    public List<String> getSpells() {
+        return spells;
     }
 
     public static class Equipment {

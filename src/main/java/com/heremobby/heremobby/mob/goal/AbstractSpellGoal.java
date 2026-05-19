@@ -30,7 +30,10 @@ public abstract class AbstractSpellGoal implements Goal<Mob> {
     @Override
     public boolean shouldActivate() {
         if (activeBoss.isChanneling()) return false;
-        if (System.currentTimeMillis() - lastUsed < cooldownMillis) return false;
+        
+        long now = System.currentTimeMillis();
+        if (now - lastUsed < cooldownMillis) return false;
+        if (now - activeBoss.getLastSpellTime() < 2000) return false; // Global 2s cooldown
 
         LivingEntity target = activeBoss.getEntity().getTarget();
         if (target == null || !target.isValid() || target.isDead()) return false;
@@ -50,7 +53,9 @@ public abstract class AbstractSpellGoal implements Goal<Mob> {
 
     @Override
     public void start() {
-        lastUsed = System.currentTimeMillis();
+        long now = System.currentTimeMillis();
+        lastUsed = now;
+        activeBoss.setLastSpellTime(now);
         activeBoss.setChanneling(true);
     }
 

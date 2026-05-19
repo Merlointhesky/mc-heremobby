@@ -39,10 +39,10 @@ public class LightningBoltGoal extends AbstractSpellGoal {
         // Visual Bolt (Vertical line of particles)
         for (double y = targetLoc.getY(); y < targetLoc.getY() + 20; y += 0.5) {
             Location pLoc = new Location(targetLoc.getWorld(), targetLoc.getX(), y, targetLoc.getZ());
-            targetLoc.getWorld().spawnParticle(Particle.FIREWORK, pLoc, 5, 0.1, 0.1, 0.1, 0.05);
+            targetLoc.getWorld().spawnParticle(Particle.CLOUD, pLoc, 2, 0.1, 0.1, 0.1, 0.05);
         }
         
-        targetLoc.getWorld().spawnParticle(Particle.FLASH, targetLoc.add(0, 1, 0), 1, 0, 0, 0, 0);
+        targetLoc.getWorld().spawnParticle(Particle.EXPLOSION, targetLoc.add(0, 1, 0), 1, 0, 0, 0, 0);
         targetLoc.getWorld().playSound(targetLoc, Sound.ENTITY_LIGHTNING_BOLT_IMPACT, 1.0f, 1.0f);
         
         // Damage target and nearby

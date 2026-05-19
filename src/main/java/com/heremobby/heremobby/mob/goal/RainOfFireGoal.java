@@ -65,8 +65,10 @@ public class RainOfFireGoal extends AbstractSpellGoal {
                                 Location land = center.clone().add(ox, 0, oz);
                                 land.getWorld().spawnParticle(Particle.LAVA, land, 5, 0.5, 0.1, 0.5, 0.05);
                                 land.getWorld().playSound(land, Sound.BLOCK_FIRE_AMBIENT, 0.5f, 1.0f);
+                                
+                                java.util.Set<LivingEntity> hitThisImpact = new java.util.HashSet<>();
                                 land.getNearbyEntities(1.5, 1.5, 1.5).forEach(e -> {
-                                    if (e instanceof LivingEntity le && le != boss) {
+                                    if (e instanceof LivingEntity le && le != boss && hitThisImpact.add(le)) {
                                         le.damage(3.0, boss);
                                         le.setFireTicks(60);
                                     }

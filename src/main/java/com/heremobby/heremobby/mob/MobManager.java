@@ -54,6 +54,35 @@ public class MobManager {
         applyEquipment(entity, config.getEquipment());
         applyScale(entity, config.getScale());
         entity.getPersistentDataContainer().set(customMobKey, PersistentDataType.STRING, config.getId());
+
+        if (entity instanceof Mob mob) {
+            // Clear ALL vanilla AI to ensure custom abilities/behavior take precedence
+            Bukkit.getMobGoals().removeAllGoals(mob);
+            
+            // Ensure passive entities have attack damage attribute so they can actually hurt players
+            AttributeInstance attackAttr = mob.getAttribute(Attribute.ATTACK_DAMAGE);
+            if (attackAttr == null) {
+                // We can't register new attributes easily, but we can check if it exists.
+                // Most Mobs have it, but some (like Pigs) might not.
+                // If it's null, our MeleeAttackGoal will use a default value.
+            } else if (attackAttr.getBaseValue() == 0) {
+                attackAttr.setBaseValue(2.0); // Give passive mobs some bite
+            }
+
+            ActiveBoss activeCaster = new ActiveBoss(mob);
+            activeBosses.put(mob.getUniqueId(), activeCaster);
+
+            var goals = Bukkit.getMobGoals();
+            goals.addGoal(mob, 1, new TargetNearestPlayerGoal(plugin, mob));
+            goals.addGoal(mob, 2, new MoveToTargetGoal(plugin, mob, 1.2));
+            goals.addGoal(mob, 3, new MeleeAttackGoal(plugin, mob));
+
+            if (config.getSpells() != null && !config.getSpells().isEmpty()) {
+                for (String spellName : config.getSpells()) {
+                    addSpellGoal(mob, activeCaster, spellName);
+                }
+            }
+        }
     }
 
     public void spawnCustomBoss(CustomBoss config) {
@@ -76,6 +105,13 @@ public class MobManager {
         // Clear Vanilla AI and register as ActiveBoss
         if (entity instanceof Mob mob) {
             Bukkit.getMobGoals().removeAllGoals(mob);
+
+            // Ensure attributes are set for combat
+            AttributeInstance attackAttr = mob.getAttribute(Attribute.ATTACK_DAMAGE);
+            if (attackAttr != null && attackAttr.getBaseValue() == 0) {
+                attackAttr.setBaseValue(5.0); // Bosses should hit harder
+            }
+
             ActiveBoss activeBoss = new ActiveBoss(mob);
             activeBosses.put(mob.getUniqueId(), activeBoss);
             
@@ -83,13 +119,31 @@ public class MobManager {
             var goals = Bukkit.getMobGoals();
             goals.addGoal(mob, 1, new TargetNearestPlayerGoal(plugin, mob));
             goals.addGoal(mob, 2, new MoveToTargetGoal(plugin, mob, 1.2));
-            goals.addGoal(mob, 3, new FlamethrowerGoal(plugin, activeBoss));
-            goals.addGoal(mob, 3, new ThunderwaveGoal(plugin, activeBoss));
-            goals.addGoal(mob, 3, new MageHandGoal(plugin, activeBoss));
-            goals.addGoal(mob, 3, new LightningBoltGoal(plugin, activeBoss));
-            goals.addGoal(mob, 3, new RainOfFireGoal(plugin, activeBoss));
-            goals.addGoal(mob, 3, new GravityDropGoal(plugin, activeBoss));
-            goals.addGoal(mob, 3, new VineWhipGoal(plugin, activeBoss));
+            goals.addGoal(mob, 3, new MeleeAttackGoal(plugin, mob));
+
+            if (config.getSpells() != null) {
+                for (String spellName : config.getSpells()) {
+                    addSpellGoal(mob, activeBoss, spellName);
+                }
+            } else {
+                // Default spells if none specified (for backward compatibility or convenience)
+                addSpellGoal(mob, activeBoss, "FLAMETHROWER");
+                addSpellGoal(mob, activeBoss, "THUNDERWAVE");
+                addSpellGoal(mob, activeBoss, "MAGE_HAND");
+            }
+        }
+    }
+
+    private void addSpellGoal(Mob mob, ActiveBoss activeBoss, String spellName) {
+        var goals = Bukkit.getMobGoals();
+        switch (spellName.toUpperCase()) {
+            case "FLAMETHROWER" -> goals.addGoal(mob, 3, new FlamethrowerGoal(plugin, activeBoss));
+            case "THUNDERWAVE" -> goals.addGoal(mob, 3, new ThunderwaveGoal(plugin, activeBoss));
+            case "MAGE_HAND" -> goals.addGoal(mob, 3, new MageHandGoal(plugin, activeBoss));
+            case "LIGHTNING_BOLT" -> goals.addGoal(mob, 3, new LightningBoltGoal(plugin, activeBoss));
+            case "RAIN_OF_FIRE" -> goals.addGoal(mob, 3, new RainOfFireGoal(plugin, activeBoss));
+            case "GRAVITY_DROP" -> goals.addGoal(mob, 3, new GravityDropGoal(plugin, activeBoss));
+            case "VINE_WHIP" -> goals.addGoal(mob, 3, new VineWhipGoal(plugin, activeBoss));
         }
     }
 

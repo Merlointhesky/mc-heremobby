@@ -51,6 +51,8 @@ public class FlamethrowerGoal extends AbstractSpellGoal {
                 Location origin = boss.getEyeLocation();
                 Vector direction = target.getLocation().add(0, 1, 0).toVector().subtract(origin.toVector()).normalize();
                 
+                java.util.Set<LivingEntity> hitThisTick = new java.util.HashSet<>();
+                
                 // Effect & Damage
                 for (double d = 1; d <= 7; d += 0.5) {
                     Location pLoc = origin.clone().add(direction.clone().multiply(d));
@@ -58,7 +60,7 @@ public class FlamethrowerGoal extends AbstractSpellGoal {
                     
                     if (ticks % 5 == 0) {
                         pLoc.getNearbyEntities(0.6, 0.6, 0.6).forEach(e -> {
-                            if (e instanceof LivingEntity le && le != boss) {
+                            if (e instanceof LivingEntity le && le != boss && hitThisTick.add(le)) {
                                 le.damage(2.0, boss);
                                 le.setFireTicks(40);
                             }

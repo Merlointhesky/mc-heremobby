@@ -46,7 +46,7 @@ public class BossPoiseListener implements Listener {
         
         // Visual and audio feedback
         entity.getWorld().playSound(entity.getLocation(), Sound.BLOCK_GLASS_BREAK, 1.0f, 0.5f);
-        entity.getWorld().spawnParticle(Particle.BLOCK_MARKER, entity.getLocation().add(0, 1, 0), 30, 0.3, 0.3, 0.3, 0.1);
+        entity.getWorld().spawnParticle(Particle.EXPLOSION, entity.getLocation().add(0, 1, 0), 10, 0.3, 0.3, 0.3, 0.1);
         
         // Staggered effect (Slowness)
         entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 4));

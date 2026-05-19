@@ -12,9 +12,18 @@ public class ActiveBoss {
     private final Mob entity;
     private boolean isChanneling = false;
     private BukkitTask activeTask = null;
+    private long lastSpellTime = 0;
 
     public ActiveBoss(Mob entity) {
         this.entity = entity;
+    }
+
+    public long getLastSpellTime() {
+        return lastSpellTime;
+    }
+
+    public void setLastSpellTime(long lastSpellTime) {
+        this.lastSpellTime = lastSpellTime;
     }
 
     public Mob getEntity() {
