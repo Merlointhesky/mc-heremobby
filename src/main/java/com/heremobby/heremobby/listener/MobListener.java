@@ -160,4 +160,11 @@ public class MobListener implements Listener {
 
         return true;
     }
+
+    @EventHandler
+    public void onEntitiesLoad(org.bukkit.event.world.EntitiesLoadEvent event) {
+        for (Entity entity : event.getEntities()) {
+            mobManager.registerExistingEntity(entity);
+        }
+    }
 }

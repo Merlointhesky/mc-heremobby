@@ -1,5 +1,5 @@
 name: HereMobby
-version: 1.1.1
+version: 1.1.2
 main: com.heremobby.heremobby.HereMobbyPlugin
 api-version: '1.21'
 softdepend: [HereShoppy]

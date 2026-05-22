@@ -45,6 +45,95 @@ public class MobManager {
         
         startBossRespawnTask();
         startBossBarUpdateTask();
+
+        // Scan loaded entities on startup to restore AI and BossBars
+        for (World world : Bukkit.getWorlds()) {
+            for (Entity entity : world.getEntities()) {
+                registerExistingEntity(entity);
+            }
+        }
+    }
+
+    public void registerExistingEntity(Entity entity) {
+        if (!(entity instanceof Mob mob)) return;
+        if (activeBosses.containsKey(mob.getUniqueId())) return; // Already registered
+
+        // Check if it's a custom boss
+        var bossConfig = getCustomBossConfig(mob);
+        if (bossConfig.isPresent()) {
+            setupCustomBossGoals(mob, bossConfig.get());
+            return;
+        }
+
+        // Check if it's a custom mob
+        var mobConfig = getCustomMobConfig(mob);
+        if (mobConfig.isPresent()) {
+            setupCustomMobGoals(mob, mobConfig.get());
+        }
+    }
+
+    public void setupCustomMobGoals(Mob mob, CustomMob config) {
+        // Clear ALL vanilla AI to ensure custom abilities/behavior take precedence
+        Bukkit.getMobGoals().removeAllGoals(mob);
+        
+        // Ensure passive entities have attack damage attribute so they can actually hurt players
+        AttributeInstance attackAttr = mob.getAttribute(Attribute.ATTACK_DAMAGE);
+        if (attackAttr != null && attackAttr.getBaseValue() == 0) {
+            attackAttr.setBaseValue(2.0); // Give passive mobs some bite
+        }
+
+        ActiveBoss activeCaster = new ActiveBoss(mob);
+        activeBosses.put(mob.getUniqueId(), activeCaster);
+
+        var goals = Bukkit.getMobGoals();
+        goals.addGoal(mob, 1, new TargetNearestPlayerGoal(plugin, mob));
+        goals.addGoal(mob, 2, new MoveToTargetGoal(plugin, mob, 1.2));
+        goals.addGoal(mob, 3, new MeleeAttackGoal(plugin, mob));
+
+        if (config.getSpells() != null && !config.getSpells().isEmpty()) {
+            for (String spellName : config.getSpells()) {
+                addSpellGoal(mob, activeCaster, spellName);
+            }
+        }
+    }
+
+    public void setupCustomBossGoals(Mob mob, CustomBoss config) {
+        // Clear Vanilla AI and register as ActiveBoss
+        Bukkit.getMobGoals().removeAllGoals(mob);
+
+        // Ensure attributes are set for combat
+        AttributeInstance attackAttr = mob.getAttribute(Attribute.ATTACK_DAMAGE);
+        if (attackAttr != null && attackAttr.getBaseValue() == 0) {
+            attackAttr.setBaseValue(5.0); // Bosses should hit harder
+        }
+
+        ActiveBoss activeBoss = new ActiveBoss(mob);
+        activeBosses.put(mob.getUniqueId(), activeBoss);
+
+        // Create BossBar for bosses
+        BossBar bossBar = Bukkit.createBossBar(
+            config.getDisplayName() != null ? config.getDisplayName() : "Boss",
+            BarColor.RED,
+            BarStyle.SOLID
+        );
+        activeBoss.setBossBar(bossBar);
+        
+        // Assign custom goals for the boss
+        var goals = Bukkit.getMobGoals();
+        goals.addGoal(mob, 1, new TargetNearestPlayerGoal(plugin, mob));
+        goals.addGoal(mob, 2, new MoveToTargetGoal(plugin, mob, 1.2));
+        goals.addGoal(mob, 3, new MeleeAttackGoal(plugin, mob));
+
+        if (config.getSpells() != null) {
+            for (String spellName : config.getSpells()) {
+                addSpellGoal(mob, activeBoss, spellName);
+            }
+        } else {
+            // Default spells if none specified (for backward compatibility or convenience)
+            addSpellGoal(mob, activeBoss, "FLAMETHROWER");
+            addSpellGoal(mob, activeBoss, "THUNDERWAVE");
+            addSpellGoal(mob, activeBoss, "MAGE_HAND");
+        }
     }
 
     public void spawnCustomMob(CustomMob config, Location loc) {
@@ -62,32 +151,7 @@ public class MobManager {
         entity.getPersistentDataContainer().set(customMobKey, PersistentDataType.STRING, config.getId());
 
         if (entity instanceof Mob mob) {
-            // Clear ALL vanilla AI to ensure custom abilities/behavior take precedence
-            Bukkit.getMobGoals().removeAllGoals(mob);
-            
-            // Ensure passive entities have attack damage attribute so they can actually hurt players
-            AttributeInstance attackAttr = mob.getAttribute(Attribute.ATTACK_DAMAGE);
-            if (attackAttr == null) {
-                // We can't register new attributes easily, but we can check if it exists.
-                // Most Mobs have it, but some (like Pigs) might not.
-                // If it's null, our MeleeAttackGoal will use a default value.
-            } else if (attackAttr.getBaseValue() == 0) {
-                attackAttr.setBaseValue(2.0); // Give passive mobs some bite
-            }
-
-            ActiveBoss activeCaster = new ActiveBoss(mob);
-            activeBosses.put(mob.getUniqueId(), activeCaster);
-
-            var goals = Bukkit.getMobGoals();
-            goals.addGoal(mob, 1, new TargetNearestPlayerGoal(plugin, mob));
-            goals.addGoal(mob, 2, new MoveToTargetGoal(plugin, mob, 1.2));
-            goals.addGoal(mob, 3, new MeleeAttackGoal(plugin, mob));
-
-            if (config.getSpells() != null && !config.getSpells().isEmpty()) {
-                for (String spellName : config.getSpells()) {
-                    addSpellGoal(mob, activeCaster, spellName);
-                }
-            }
+            setupCustomMobGoals(mob, config);
         }
     }
 
@@ -109,43 +173,8 @@ public class MobManager {
         applyHealth(entity, config.getMaxHealth());
         entity.getPersistentDataContainer().set(customBossKey, PersistentDataType.STRING, config.getId());
 
-        // Clear Vanilla AI and register as ActiveBoss
         if (entity instanceof Mob mob) {
-            Bukkit.getMobGoals().removeAllGoals(mob);
-
-            // Ensure attributes are set for combat
-            AttributeInstance attackAttr = mob.getAttribute(Attribute.ATTACK_DAMAGE);
-            if (attackAttr != null && attackAttr.getBaseValue() == 0) {
-                attackAttr.setBaseValue(5.0); // Bosses should hit harder
-            }
-
-            ActiveBoss activeBoss = new ActiveBoss(mob);
-            activeBosses.put(mob.getUniqueId(), activeBoss);
-
-            // Create BossBar for bosses
-            BossBar bossBar = Bukkit.createBossBar(
-                config.getDisplayName() != null ? config.getDisplayName() : "Boss",
-                BarColor.RED,
-                BarStyle.SOLID
-            );
-            activeBoss.setBossBar(bossBar);
-            
-            // Assign custom goals for the boss
-            var goals = Bukkit.getMobGoals();
-            goals.addGoal(mob, 1, new TargetNearestPlayerGoal(plugin, mob));
-            goals.addGoal(mob, 2, new MoveToTargetGoal(plugin, mob, 1.2));
-            goals.addGoal(mob, 3, new MeleeAttackGoal(plugin, mob));
-
-            if (config.getSpells() != null) {
-                for (String spellName : config.getSpells()) {
-                    addSpellGoal(mob, activeBoss, spellName);
-                }
-            } else {
-                // Default spells if none specified (for backward compatibility or convenience)
-                addSpellGoal(mob, activeBoss, "FLAMETHROWER");
-                addSpellGoal(mob, activeBoss, "THUNDERWAVE");
-                addSpellGoal(mob, activeBoss, "MAGE_HAND");
-            }
+            setupCustomBossGoals(mob, config);
         }
     }
 
@@ -222,6 +251,16 @@ public class MobManager {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             long now = System.currentTimeMillis();
             for (CustomBoss boss : dataManager.getCustomBosses()) {
+                World world = Bukkit.getWorld(boss.getLocation().getWorld());
+                if (world == null) continue;
+
+                Location spawnLoc = new Location(world, boss.getLocation().getX(), boss.getLocation().getY(), boss.getLocation().getZ());
+                // Only spawn or check if the spawn chunk is loaded.
+                // If it is not loaded, we do not attempt to check or spawn.
+                if (!spawnLoc.getChunk().isLoaded()) {
+                    continue;
+                }
+
                 long lastDeath = dataManager.getBossState().getLastDeath(boss.getId());
                 if (lastDeath > 0 && (now - lastDeath) >= (boss.getRespawnSeconds() * 1000L)) {
                     // Check if already spawned (simple check: any boss with this ID in the world)

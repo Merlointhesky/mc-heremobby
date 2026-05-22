@@ -18,7 +18,7 @@ A [Paper](https://papermc.io) Minecraft plugin for **mob management** — manage
 
 ## Installation
 
-1. Grab `HereMobby-1.1.1.jar` from Releases (or `./gradlew build` locally).
+1. Grab `HereMobby-1.1.2.jar` from Releases (or `./gradlew build` locally).
 2. Drop the JAR in `plugins/`.
 3. Restart the server.
 
@@ -35,7 +35,7 @@ A [Paper](https://papermc.io) Minecraft plugin for **mob management** — manage
 The compiled plugin jar is written to:
 
 ```
-build/libs/HereMobby-1.1.1.jar
+build/libs/HereMobby-1.1.2.jar
 ```
 
 ## Recent Changes (v1.1.1)
@@ -71,7 +71,7 @@ Detailed documentation on configuration, custom mobs/bosses, and the spellcastin
 
 ## Version
 
-Current release: **`1.1.1`**
+Current release: **`1.1.2`**
 
 ## License
 
