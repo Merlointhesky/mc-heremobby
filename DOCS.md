@@ -188,3 +188,85 @@ To make a boss drop specific equipment, you should define it in the `customLoot`
 }
 ```
 By adding the equipment materials to `customLoot` with a `1.0` chance, you ensure the boss always drops its "signature" gear.
+
+## 7. Custom Vehicles, Pets, and Wild Animals Framework
+
+HereMobby includes a comprehensive YAML-driven custom items framework to dynamically load mounts (vehicles), pets, and wild animals. Configurations are loaded automatically from subdirectories (`mounts/`, `pets/`, and `wild_animals/`) within the plugin folder.
+
+Each custom item registered automatically generates its corresponding item stack, shaped crafting recipe, and custom spawning, riding, and deconstruction lifecycle.
+
+---
+
+### A. Custom Vehicles (Mounts)
+Vehicles are registered with the category `MOUNT` and are spawned when players place their corresponding item. 
+
+The modern **ItemDisplay** backend system (used for the rideable rocket) provides high-performance 3D visual models and a multiplayer/passenger mechanism:
+- **Spawning:** Places an `ItemDisplay` base entity centered on and facing away from the player, along with 2 invisible, small, synchronized seat markers (`ArmorStand`s) for the driver and passenger.
+- **Riding Priority:** Players who right-click the vehicle are assigned to empty seats. The first player to interact gains control as the driver; subsequent players mount as passengers.
+- **Steering:** The driver's real-time look direction (yaw and pitch) steers the vehicle, supporting full 3D aerial flight.
+- **Deconstruction:** Punching any part of the vehicle cancels standard damage mechanics, drops the custom vehicle item naturally, and deletes all linked seat/visual components safely.
+
+#### Configuration Example (`mounts/rideable_rocket.yml`)
+```yaml
+display_name: "&6X-52 Nether-Rocket"
+material: FIREWORK_ROCKET
+custom_model_data: 1001
+category: MOUNT
+model_id: rideable_rocket
+recipe:
+  shape:
+    - "GSS"
+    - "RRR"
+    - "RRR"
+  ingredients:
+    G: GLASS_PANE
+    S: SADDLE
+    R: FIREWORK_ROCKET
+```
+
+---
+
+### B. Custom Pets
+Pets are registered with the category `PET`. When a player spawns a pet, the entity is tagged and bound to the owner's UUID, automatically following them around.
+
+#### Configuration Example (`pets/helper_drone.yml`)
+```yaml
+display_name: "&bPersonal Helper Drone"
+material: PHANTOM_MEMBRANE
+custom_model_data: 2001
+category: PET
+model_id: helper_drone
+recipe:
+  shape:
+    - "RDR"
+    - "ICI"
+    - "RIR"
+  ingredients:
+    R: REDSTONE
+    D: DIAMOND
+    I: IRON_INGOT
+    C: COMPARATOR
+```
+
+---
+
+### C. Custom Wild Animals
+Wild animals are registered with the category `WILD`. Spawning a wild animal creates a custom entity with standard passive AI that wanders the environment naturally.
+
+#### Configuration Example (`wild_animals/golden_sheep.yml`)
+```yaml
+display_name: "&eGolden Sheep"
+material: YELLOW_WOOL
+custom_model_data: 3001
+category: WILD
+model_id: golden_sheep
+recipe:
+  shape:
+    - "GGG"
+    - "GWG"
+    - "GGG"
+  ingredients:
+    G: GOLD_INGOT
+    W: WHITE_WOOL
+```
+

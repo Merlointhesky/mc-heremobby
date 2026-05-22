@@ -8,7 +8,13 @@ import com.heremobby.heremobby.listener.BossPoiseListener;
 import com.heremobby.heremobby.listener.MobListener;
 import com.heremobby.heremobby.listener.SpellListener;
 import com.heremobby.heremobby.mob.MobManager;
+import com.heremobby.heremobby.framework.item.ItemRegistry;
+import com.heremobby.heremobby.framework.mount.MountListener;
+import com.heremobby.heremobby.framework.mount.MountTask;
+import com.heremobby.heremobby.framework.pet.PetListener;
+import com.heremobby.heremobby.framework.wild.WildAnimalListener;
 import org.bukkit.plugin.java.JavaPlugin;
+import java.io.File;
 
 public class HereMobbyPlugin extends JavaPlugin {
 
@@ -16,6 +22,7 @@ public class HereMobbyPlugin extends JavaPlugin {
     private DataManager dataManager;
     private MobManager mobManager;
     private InfoGUI infoGUI;
+    private ItemRegistry itemRegistry;
 
     @Override
     public void onEnable() {
@@ -24,20 +31,44 @@ public class HereMobbyPlugin extends JavaPlugin {
         // Initialize Managers
         this.dataManager = new DataManager(this);
         this.mobManager = new MobManager(this, this.dataManager);
+        this.itemRegistry = new ItemRegistry(this);
         
         // Initialize GUIs
         this.infoGUI = new InfoGUI(this.dataManager);
 
         // Register Listeners
-        getServer().getPluginManager().registerEvents(new MobListener(this.mobManager, this.dataManager), this);
-        getServer().getPluginManager().registerEvents(new InfoListener(), this);
-        getServer().getPluginManager().registerEvents(new SpellListener(this), this);
-        getServer().getPluginManager().registerEvents(new BossPoiseListener(this.mobManager), this);
+        var pm = getServer().getPluginManager();
+        pm.registerEvents(new MobListener(this.mobManager, this.dataManager), this);
+        pm.registerEvents(new InfoListener(), this);
+        pm.registerEvents(new SpellListener(this), this);
+        pm.registerEvents(new BossPoiseListener(this.mobManager), this);
+        
+        // Register New Framework Listeners
+        pm.registerEvents(new MountListener(), this);
+        pm.registerEvents(new PetListener(), this);
+        pm.registerEvents(new WildAnimalListener(), this);
+        pm.registerEvents(this.itemRegistry, this);
 
         // Register Commands
         HereMobbyCommand cmd = new HereMobbyCommand(this.infoGUI, this.dataManager, this.mobManager);
         getCommand("heremobby").setExecutor(cmd);
         getCommand("heremobby").setTabCompleter(cmd);
+        
+        // Save Default Resources
+        File mountsDir = new File(getDataFolder(), "mounts");
+        if (!mountsDir.exists()) mountsDir.mkdirs();
+        File petsDir = new File(getDataFolder(), "pets");
+        if (!petsDir.exists()) petsDir.mkdirs();
+        File wildDir = new File(getDataFolder(), "wild_animals");
+        if (!wildDir.exists()) wildDir.mkdirs();
+        
+        saveResource("mounts/rideable_rocket.yml", false);
+
+        // Load Custom Items and Recipes
+        this.itemRegistry.loadConfig();
+        
+        // Start Tasks
+        getServer().getScheduler().runTaskTimer(this, new MountTask(), 20L, 1L);
         
         getLogger().info("HereMobby has been enabled!");
     }

@@ -18,7 +18,7 @@ A [Paper](https://papermc.io) Minecraft plugin for **mob management** — manage
 
 ## Installation
 
-1. Grab `HereMobby-1.0.0.jar` from Releases (or `./gradlew build` locally).
+1. Grab `HereMobby-1.1.1.jar` from Releases (or `./gradlew build` locally).
 2. Drop the JAR in `plugins/`.
 3. Restart the server.
 
@@ -35,16 +35,23 @@ A [Paper](https://papermc.io) Minecraft plugin for **mob management** — manage
 The compiled plugin jar is written to:
 
 ```
-build/libs/HereMobby-1.0.0.jar
+build/libs/HereMobby-1.1.1.jar
 ```
+
+## Recent Changes (v1.1.1)
+
+- **Added command alias `/hm`** — Players can now use `/hm` as a short alias for `/heremobby`.
+- **Version bump & clean build** — Bumped version to `1.1.1` to maintain consistency across all plugins.
 
 ## Commands & Permissions
 
+All commands can be run with `/hm` instead of `/heremobby`.
+
 | Command | Description | Permission |
 |---------|-------------|------------|
-| `/heremobby info` | Open the mob information GUI | `heremobby.use` |
-| `/heremobby spawn <id>` | Spawn a custom mob or boss | `heremobby.admin` |
-| `/heremobby reload` | Reload configuration files | `heremobby.admin` |
+| `/heremobby info` (or `/hm info`) | Open the mob information GUI | `heremobby.use` |
+| `/heremobby spawn <id>` (or `/hm spawn <id>`) | Spawn a custom mob or boss | `heremobby.admin` |
+| `/heremobby reload` (or `/hm reload`) | Reload configuration files | `heremobby.admin` |
 
 | Permission | Description | Default |
 |------------|-------------|---------|
@@ -64,7 +71,7 @@ Detailed documentation on configuration, custom mobs/bosses, and the spellcastin
 
 ## Version
 
-Current release: **`1.0.0`**
+Current release: **`1.1.1`**
 
 ## License
 
