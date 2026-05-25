@@ -26,21 +26,25 @@ public class FollowOwnerGoal implements Goal<Mob> {
     public boolean shouldActivate() {
         owner = plugin.getServer().getPlayer(ownerId);
         if (owner == null) return false;
-        if (!owner.getWorld().equals(mob.getWorld())) return false;
+        if (!owner.getWorld().equals(mob.getWorld())) return true; // Activate to teleport across worlds
         return owner.getLocation().distanceSquared(mob.getLocation()) > 9; // Follow if more than 3 blocks away
     }
 
     @Override
     public boolean shouldStayActive() {
         if (owner == null || !owner.isOnline()) return false;
-        if (!owner.getWorld().equals(mob.getWorld())) return false;
+        if (!owner.getWorld().equals(mob.getWorld())) return true; // Stay active to teleport across worlds
         return owner.getLocation().distanceSquared(mob.getLocation()) > 4; // Stay active until 2 blocks away
     }
 
     @Override
     public void tick() {
         if (owner != null) {
-            mob.getPathfinder().moveTo(owner.getLocation(), 1.5);
+            if (!owner.getWorld().equals(mob.getWorld()) || mob.getLocation().distanceSquared(owner.getLocation()) > 256) {
+                mob.teleport(owner.getLocation());
+            } else {
+                mob.getPathfinder().moveTo(owner.getLocation(), 1.5);
+            }
         }
     }
 

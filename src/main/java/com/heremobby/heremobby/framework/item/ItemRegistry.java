@@ -37,8 +37,8 @@ public class ItemRegistry implements Listener {
         this.plugin = plugin;
     }
 
-    public void register(int cmd, String entityId, EntityCategory category, String modelId, Material material, String displayName) {
-        registry.put(cmd, new EntityTypeInfo(entityId, category, modelId, material, displayName));
+    public void register(int cmd, String entityId, EntityCategory category, String modelId, Material material, String displayName, org.bukkit.entity.EntityType baseType, boolean killable, double maxHealth) {
+        registry.put(cmd, new EntityTypeInfo(entityId, category, modelId, material, displayName, baseType, killable, maxHealth));
         plugin.getLogger().info("Registered custom item: " + displayName + " (CMD: " + cmd + ")");
     }
 
@@ -71,7 +71,21 @@ public class ItemRegistry implements Listener {
                 EntityCategory category = EntityCategory.valueOf(categoryStr);
                 String modelId = config.getString("model_id", entityId);
 
-                register(cmd, entityId, category, modelId, material, displayName);
+                org.bukkit.entity.EntityType baseType = org.bukkit.entity.EntityType.WOLF;
+                if (config.contains("base_type")) {
+                    try {
+                        baseType = org.bukkit.entity.EntityType.valueOf(config.getString("base_type").toUpperCase());
+                    } catch (Exception e) {
+                        plugin.getLogger().warning("Invalid base_type: " + config.getString("base_type") + " for " + entityId);
+                    }
+                } else if (category == EntityCategory.WILD) {
+                    baseType = org.bukkit.entity.EntityType.COW;
+                }
+
+                boolean killable = config.getBoolean("killable", false);
+                double maxHealth = config.getDouble("max_health", -1.0);
+
+                register(cmd, entityId, category, modelId, material, displayName, baseType, killable, maxHealth);
 
                 // Register Recipe
                 if (config.contains("recipe")) {
@@ -111,9 +125,15 @@ public class ItemRegistry implements Listener {
         if (meta != null) {
             meta.setDisplayName(name);
             meta.setCustomModelData(cmd);
-            if (material == Material.FIREWORK_ROCKET && cmd == 1001) {
+            
+            // Check registry for 1.21.4 item model
+            EntityTypeInfo info = registry.get(cmd);
+            if (info != null && info.modelId != null && !info.modelId.isEmpty()) {
+                meta.setItemModel(NamespacedKey.minecraft(info.modelId));
+            } else if (material == Material.FIREWORK_ROCKET && cmd == 1001) {
                 meta.setItemModel(NamespacedKey.minecraft("rideable_rocket"));
             }
+            
             item.setItemMeta(meta);
         }
         return item;
@@ -149,8 +169,8 @@ public class ItemRegistry implements Listener {
                     mount.getBaseEntity().addScoreboardTag("rideable_rocket_vehicle");
                 }
             }
-            case PET -> new CustomPet(info.entityId, info.modelId, player.getUniqueId()).spawn(loc);
-            case WILD -> new CustomWildAnimal(info.entityId, info.modelId, EntityType.COW).spawn(loc);
+            case PET -> new CustomPet(info.entityId, info.modelId, player.getUniqueId(), info.baseType, info.killable, info.maxHealth, info.material, meta.getCustomModelData()).spawn(loc);
+            case WILD -> new CustomWildAnimal(info.entityId, info.modelId, info.baseType).spawn(loc);
         }
     }
 
@@ -188,6 +208,9 @@ public class ItemRegistry implements Listener {
             for (Map.Entry<Integer, EntityTypeInfo> entry : registry.entrySet()) {
                 if (entry.getValue().entityId.equals(customId)) {
                     event.setCancelled(true);
+                    for (Entity passenger : entity.getPassengers()) {
+                        passenger.remove();
+                    }
                     entity.remove();
 
                     EntityTypeInfo info = entry.getValue();
@@ -200,5 +223,5 @@ public class ItemRegistry implements Listener {
     }
 
     public enum EntityCategory { MOUNT, PET, WILD }
-    private record EntityTypeInfo(String entityId, EntityCategory category, String modelId, Material material, String displayName) {}
+    private record EntityTypeInfo(String entityId, EntityCategory category, String modelId, Material material, String displayName, org.bukkit.entity.EntityType baseType, boolean killable, double maxHealth) {}
 }

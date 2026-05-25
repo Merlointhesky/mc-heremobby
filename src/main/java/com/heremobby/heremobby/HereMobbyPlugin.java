@@ -63,6 +63,7 @@ public class HereMobbyPlugin extends JavaPlugin {
         if (!wildDir.exists()) wildDir.mkdirs();
         
         saveResource("mounts/rideable_rocket.yml", false);
+        saveResource("pets/lamp.yml", false);
 
         // Load Custom Items and Recipes
         this.itemRegistry.loadConfig();

@@ -5,10 +5,15 @@ import com.heremobby.heremobby.framework.CustomEntity;
 import com.heremobby.heremobby.framework.EntityBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import java.util.UUID;
 
@@ -16,21 +21,73 @@ public class CustomPet implements CustomEntity {
     private final String typeId;
     private final String modelId;
     private final UUID ownerId;
+    private final EntityType baseType;
+    private final boolean killable;
+    private final double maxHealth;
+    private final Material material;
+    private final int customModelData;
     private Entity baseEntity;
-    private static final NamespacedKey OWNER_KEY = new NamespacedKey(HereMobbyPlugin.getInstance(), "pet_owner");
 
-    public CustomPet(String typeId, String modelId, UUID ownerId) {
+    public static final NamespacedKey OWNER_KEY = new NamespacedKey(HereMobbyPlugin.getInstance(), "pet_owner");
+    public static final NamespacedKey KILLABLE_KEY = new NamespacedKey(HereMobbyPlugin.getInstance(), "pet_killable");
+
+    public CustomPet(String typeId, String modelId, UUID ownerId, EntityType baseType, boolean killable, double maxHealth, Material material, int customModelData) {
         this.typeId = typeId;
         this.modelId = modelId;
         this.ownerId = ownerId;
+        this.baseType = baseType;
+        this.killable = killable;
+        this.maxHealth = maxHealth;
+        this.material = material;
+        this.customModelData = customModelData;
     }
 
     public void spawn(Location loc) {
-        // Using Wolf as a base engine for pets
-        this.baseEntity = EntityBuilder.createBaseEntity(loc, EntityType.WOLF, typeId);
+        // Spawn configured base entity type (e.g. ALLAY for flying, WOLF for land)
+        this.baseEntity = EntityBuilder.createBaseEntity(loc, baseType, typeId);
         this.baseEntity.getPersistentDataContainer().set(OWNER_KEY, PersistentDataType.STRING, ownerId.toString());
         
+        if (killable) {
+            this.baseEntity.getPersistentDataContainer().set(KILLABLE_KEY, PersistentDataType.BYTE, (byte) 1);
+        }
+
+        // Set custom maximum health if configured and entity is living
+        if (this.baseEntity instanceof LivingEntity le && maxHealth > 0) {
+            var attribute = le.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH);
+            if (attribute != null) {
+                attribute.setBaseValue(maxHealth);
+                le.setHealth(maxHealth);
+            }
+        }
+        
+        // Try applying BetterModel if enabled (backwards compatibility)
         EntityBuilder.applyBetterModel(baseEntity, modelId);
+        
+        // Vanilla-friendly rendering: spawn an ItemDisplay displaying the custom model item,
+        // and mount it as a passenger so it floats smoothly on top of the base entity.
+        if (material != null) {
+            Location displayLoc = baseEntity.getLocation();
+            ItemDisplay display = (ItemDisplay) baseEntity.getWorld().spawnEntity(displayLoc, EntityType.ITEM_DISPLAY);
+            
+            ItemStack item = new ItemStack(material);
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
+                meta.setCustomModelData(customModelData);
+                if (modelId != null && !modelId.isEmpty()) {
+                    meta.setItemModel(NamespacedKey.minecraft(modelId));
+                }
+                item.setItemMeta(meta);
+            }
+            display.setItemStack(item);
+            display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.HEAD);
+            display.setBrightness(new org.bukkit.entity.Display.Brightness(15, 15)); // Make it glow bright!
+            
+            // Add custom entity tagging to display so it is skipped from targeting, etc.
+            display.addScoreboardTag(EntityBuilder.TAG_HEREMOBBY);
+            display.addScoreboardTag("heremobby_display");
+            
+            baseEntity.addPassenger(display);
+        }
         
         if (baseEntity instanceof Mob mob) {
             Bukkit.getMobGoals().removeAllGoals(mob);
@@ -50,7 +107,13 @@ public class CustomPet implements CustomEntity {
 
     @Override
     public void remove() {
-        if (baseEntity != null) baseEntity.remove();
+        if (baseEntity != null) {
+            // Safely remove any mounted visual passenger displays first
+            for (Entity passenger : baseEntity.getPassengers()) {
+                passenger.remove();
+            }
+            baseEntity.remove();
+        }
     }
 
     @Override
