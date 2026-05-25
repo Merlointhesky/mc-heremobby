@@ -2,7 +2,7 @@ display_name: "&eFloating Lamp Drone"
 material: LANTERN
 custom_model_data: 2002
 category: PET
-model_id: lamp
+model_id: vanilla
 base_type: ALLAY
 killable: true
 max_health: 20.0

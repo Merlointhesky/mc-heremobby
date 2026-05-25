@@ -128,7 +128,7 @@ public class ItemRegistry implements Listener {
             
             // Check registry for 1.21.4 item model
             EntityTypeInfo info = registry.get(cmd);
-            if (info != null && info.modelId != null && !info.modelId.isEmpty()) {
+            if (info != null && info.modelId != null && !info.modelId.isEmpty() && !info.modelId.equalsIgnoreCase("vanilla")) {
                 meta.setItemModel(NamespacedKey.minecraft(info.modelId));
             } else if (material == Material.FIREWORK_ROCKET && cmd == 1001) {
                 meta.setItemModel(NamespacedKey.minecraft("rideable_rocket"));

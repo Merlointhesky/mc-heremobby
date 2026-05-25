@@ -12,6 +12,7 @@ import com.heremobby.heremobby.framework.item.ItemRegistry;
 import com.heremobby.heremobby.framework.mount.MountListener;
 import com.heremobby.heremobby.framework.mount.MountTask;
 import com.heremobby.heremobby.framework.pet.PetListener;
+import com.heremobby.heremobby.framework.pet.PetLightTask;
 import com.heremobby.heremobby.framework.wild.WildAnimalListener;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
@@ -23,6 +24,7 @@ public class HereMobbyPlugin extends JavaPlugin {
     private MobManager mobManager;
     private InfoGUI infoGUI;
     private ItemRegistry itemRegistry;
+    private PetLightTask petLightTask;
 
     @Override
     public void onEnable() {
@@ -71,6 +73,9 @@ public class HereMobbyPlugin extends JavaPlugin {
         // Start Tasks
         getServer().getScheduler().runTaskTimer(this, new MountTask(), 20L, 1L);
         
+        this.petLightTask = new PetLightTask();
+        getServer().getScheduler().runTaskTimer(this, this.petLightTask, 20L, 2L); // run every 2 ticks
+        
         getLogger().info("HereMobby has been enabled!");
     }
 
@@ -78,6 +83,9 @@ public class HereMobbyPlugin extends JavaPlugin {
     public void onDisable() {
         if (dataManager != null) {
             dataManager.saveBossState();
+        }
+        if (petLightTask != null) {
+            petLightTask.cleanupAll();
         }
         getLogger().info("HereMobby has been disabled!");
     }

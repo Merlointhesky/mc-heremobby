@@ -61,32 +61,64 @@ public class CustomPet implements CustomEntity {
         }
         
         // Try applying BetterModel if enabled (backwards compatibility)
-        EntityBuilder.applyBetterModel(baseEntity, modelId);
+        if (modelId != null && !modelId.equalsIgnoreCase("vanilla")) {
+            EntityBuilder.applyBetterModel(baseEntity, modelId);
+        }
         
-        // Vanilla-friendly rendering: spawn an ItemDisplay displaying the custom model item,
-        // and mount it as a passenger so it floats smoothly on top of the base entity.
+        // Vanilla-friendly rendering: if it's a vanilla model, make the living entity invisible
+        if (modelId != null && modelId.equalsIgnoreCase("vanilla") && baseEntity instanceof org.bukkit.entity.LivingEntity le) {
+            le.addPotionEffect(new org.bukkit.potion.PotionEffect(
+                org.bukkit.potion.PotionEffectType.INVISIBILITY,
+                Integer.MAX_VALUE,
+                1,
+                false,
+                false
+            ));
+        }
+
         if (material != null) {
             Location displayLoc = baseEntity.getLocation();
-            ItemDisplay display = (ItemDisplay) baseEntity.getWorld().spawnEntity(displayLoc, EntityType.ITEM_DISPLAY);
             
-            ItemStack item = new ItemStack(material);
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                meta.setCustomModelData(customModelData);
-                if (modelId != null && !modelId.isEmpty()) {
-                    meta.setItemModel(NamespacedKey.minecraft(modelId));
+            if (material.isBlock()) {
+                org.bukkit.entity.BlockDisplay display = (org.bukkit.entity.BlockDisplay) baseEntity.getWorld().spawnEntity(displayLoc, EntityType.BLOCK_DISPLAY);
+                display.setBlock(Bukkit.createBlockData(material));
+                
+                // Add custom entity tagging to display so it is skipped from targeting, etc.
+                display.addScoreboardTag(EntityBuilder.TAG_HEREMOBBY);
+                display.addScoreboardTag("heremobby_display");
+                
+                display.setBrightness(new org.bukkit.entity.Display.Brightness(15, 15));
+                
+                org.bukkit.util.Transformation transformation = display.getTransformation();
+                // Center the block display. Block origin is at 0,0,0 corner.
+                transformation.getTranslation().set(-0.5f, 0.5f, -0.5f);
+                display.setTransformation(transformation);
+                
+                baseEntity.addPassenger(display);
+            } else {
+                ItemDisplay display = (ItemDisplay) baseEntity.getWorld().spawnEntity(displayLoc, EntityType.ITEM_DISPLAY);
+                
+                ItemStack item = new ItemStack(material);
+                ItemMeta meta = item.getItemMeta();
+                if (meta != null) {
+                    if (modelId != null && !modelId.equalsIgnoreCase("vanilla")) {
+                        meta.setCustomModelData(customModelData);
+                        if (!modelId.isEmpty()) {
+                            meta.setItemModel(NamespacedKey.minecraft(modelId));
+                        }
+                    }
+                    item.setItemMeta(meta);
                 }
-                item.setItemMeta(meta);
+                display.setItemStack(item);
+                display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.HEAD);
+                display.setBrightness(new org.bukkit.entity.Display.Brightness(15, 15)); // Make it glow bright!
+                
+                // Add custom entity tagging to display so it is skipped from targeting, etc.
+                display.addScoreboardTag(EntityBuilder.TAG_HEREMOBBY);
+                display.addScoreboardTag("heremobby_display");
+                
+                baseEntity.addPassenger(display);
             }
-            display.setItemStack(item);
-            display.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.HEAD);
-            display.setBrightness(new org.bukkit.entity.Display.Brightness(15, 15)); // Make it glow bright!
-            
-            // Add custom entity tagging to display so it is skipped from targeting, etc.
-            display.addScoreboardTag(EntityBuilder.TAG_HEREMOBBY);
-            display.addScoreboardTag("heremobby_display");
-            
-            baseEntity.addPassenger(display);
         }
         
         if (baseEntity instanceof Mob mob) {
