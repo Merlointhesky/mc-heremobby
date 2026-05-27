@@ -1,0 +1,14 @@
+display_name: "&6X-52 Nether-Rocket"
+material: FIREWORK_ROCKET
+custom_model_data: 1001
+category: MOUNT
+model_id: rideable_rocket
+recipe:
+  shape:
+    - "GSS"
+    - "RRR"
+    - "RRR"
+  ingredients:
+    G: GLASS_PANE
+    S: SADDLE
+    R: FIREWORK_ROCKET

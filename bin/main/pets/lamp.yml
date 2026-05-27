@@ -1,0 +1,16 @@
+display_name: "&eFloating Lamp Drone"
+material: LANTERN
+custom_model_data: 2002
+category: PET
+model_id: vanilla
+base_type: ALLAY
+killable: true
+max_health: 20.0
+recipe:
+  shape:
+    - "GGG"
+    - "GLG"
+    - "GGG"
+  ingredients:
+    G: GHAST_TEAR
+    L: LANTERN
