@@ -13,6 +13,8 @@ import java.util.UUID;
 
 public class MountTask implements Runnable {
 
+    public static final java.util.Set<UUID> cruiseControlActive = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
+
     @Override
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -27,46 +29,61 @@ public class MountTask implements Runnable {
                         if (display != null && display.isValid()) {
                             // Check if this seat is the driver seat
                             String seatType = vehicle.getPersistentDataContainer().get(CustomMount.SEAT_TYPE_KEY, PersistentDataType.STRING);
-                            if ("driver".equals(seatType)) {
-                                org.bukkit.Input input = player.getCurrentInput();
-                                Vector moveVec = new Vector(0, 0, 0);
-                                double speed = 0.3;
-                                
-                                float yaw = player.getLocation().getYaw();
-                                float pitch = player.getLocation().getPitch();
-                                
-                                Vector forward = player.getLocation().getDirection().normalize();
-                                Vector forwardHorizontal = forward.clone();
-                                forwardHorizontal.setY(0);
-                                if (forwardHorizontal.lengthSquared() > 0) {
-                                    forwardHorizontal.normalize();
-                                }
-                                
-                                Vector left = new Vector(forwardHorizontal.getZ(), 0, -forwardHorizontal.getX());
-                                if (left.lengthSquared() > 0) {
-                                    left.normalize();
-                                }
-                                
-                                // W: Forward
-                                if (input.isForward()) {
-                                    moveVec.add(forward.multiply(speed));
-                                }
-                                // S: Backward
-                                if (input.isBackward()) {
-                                    moveVec.add(forward.multiply(-speed));
-                                }
-                                // A: Strafe Left
-                                if (input.isLeft()) {
-                                    moveVec.add(left.multiply(speed));
-                                }
-                                // D: Strafe Right
-                                if (input.isRight()) {
-                                    moveVec.add(left.multiply(-speed));
-                                }
-                                // Space (Jump): Fly Up
-                                if (input.isJump()) {
-                                    moveVec.add(new Vector(0, speed, 0));
-                                }
+                                if ("driver".equals(seatType)) {
+                                    org.bukkit.Input input = player.getCurrentInput();
+                                    Vector moveVec = new Vector(0, 0, 0);
+                                    double speed = 0.3;
+                                    
+                                    float yaw = player.getLocation().getYaw();
+                                    float pitch = player.getLocation().getPitch();
+                                    
+                                    Vector forward = player.getLocation().getDirection().normalize();
+                                    Vector forwardHorizontal = forward.clone();
+                                    forwardHorizontal.setY(0);
+                                    if (forwardHorizontal.lengthSquared() > 0) {
+                                        forwardHorizontal.normalize();
+                                    }
+                                    
+                                    Vector left = new Vector(forwardHorizontal.getZ(), 0, -forwardHorizontal.getX());
+                                    if (left.lengthSquared() > 0) {
+                                        left.normalize();
+                                    }
+                                    
+                                    UUID uuid = player.getUniqueId();
+                                    boolean hasCruise = cruiseControlActive.contains(uuid);
+
+                                    // If user has cruise active but presses W (Forward) or S (Backward), cancel it!
+                                    if (hasCruise && (input.isForward() || input.isBackward())) {
+                                        cruiseControlActive.remove(uuid);
+                                        hasCruise = false;
+                                        player.sendMessage(net.kyori.adventure.text.Component.text("🚀 Rocket Cruise Control: DISABLED").color(net.kyori.adventure.text.format.NamedTextColor.RED));
+                                    }
+
+                                    if (hasCruise) {
+                                        // Cruise mode: move forward automatically!
+                                        moveVec.add(forward.multiply(speed));
+                                    } else {
+                                        // W: Forward
+                                        if (input.isForward()) {
+                                            moveVec.add(forward.multiply(speed));
+                                        }
+                                        // S: Backward
+                                        if (input.isBackward()) {
+                                            moveVec.add(forward.multiply(-speed));
+                                        }
+                                    }
+                                    // A: Strafe Left
+                                    if (input.isLeft()) {
+                                        moveVec.add(left.multiply(speed));
+                                    }
+                                    // D: Strafe Right
+                                    if (input.isRight()) {
+                                        moveVec.add(left.multiply(-speed));
+                                    }
+                                    // Space (Jump): Fly Up
+                                    if (input.isJump()) {
+                                        moveVec.add(new Vector(0, speed, 0));
+                                    }
                                 
                                 if (moveVec.lengthSquared() > 0) {
                                     // Move display with sliding collision detection to prevent flying into blocks
