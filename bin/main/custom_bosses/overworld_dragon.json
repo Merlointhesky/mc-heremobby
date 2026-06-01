@@ -1,0 +1,24 @@
+{
+  "id": "overworld_dragon",
+  "displayName": "§d§lOverworld Elder Dragon",
+  "baseType": "ENDER_DRAGON",
+  "scale": 1.0,
+  "maxHealth": 600.0,
+  "defense": 0.3,
+  "kroinReward": 1000,
+  "xpReward": 5000,
+  "location": {
+    "world": "world",
+    "x": 113.0,
+    "y": 83.0,
+    "z": 1920.0
+  },
+  "respawnSeconds": 3600,
+  "customLoot": [
+    { "material": "dragon_slayer", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
+    { "material": "DRAGON_EGG", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
+    { "material": "ELYTRA", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
+    { "material": "DRAGON_BREATH", "minAmount": 5, "maxAmount": 10, "chance": 1.0 },
+    { "material": "DIAMOND", "minAmount": 5, "maxAmount": 15, "chance": 1.0 }
+  ]
+}

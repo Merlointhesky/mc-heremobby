@@ -1,0 +1,29 @@
+{
+  "id": "deep_dark_guardian",
+  "displayName": "§3§lDeep Dark Guardian",
+  "baseType": "WARDEN",
+  "scale": 1.2,
+  "maxHealth": 800.0,
+  "defense": 0.4,
+  "kroinReward": 2500,
+  "xpReward": 10000,
+  "spells": [
+    "MAGE_HAND",
+    "GRAVITY_DROP",
+    "VINE_WHIP"
+  ],
+  "location": {
+    "world": "world",
+    "x": -855.0,
+    "y": 64.0,
+    "z": 715.0
+  },
+  "respawnSeconds": 3600,
+  "customLoot": [
+    { "material": "world_war", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
+    { "material": "NETHERITE_SCRAP", "minAmount": 2, "maxAmount": 6, "chance": 1.0 },
+    { "material": "ECHO_SHARD", "minAmount": 4, "maxAmount": 10, "chance": 1.0 },
+    { "material": "DIAMOND", "minAmount": 4, "maxAmount": 8, "chance": 1.0 },
+    { "material": "NETHERITE_UPGRADE_SMITHING_TEMPLATE", "minAmount": 1, "maxAmount": 1, "chance": 0.5 }
+  ]
+}

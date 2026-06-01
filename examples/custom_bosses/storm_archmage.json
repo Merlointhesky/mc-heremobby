@@ -1,0 +1,29 @@
+{
+  "id": "storm_archmage",
+  "displayName": "§b§lStorm Archmage",
+  "baseType": "ILLUSIONER",
+  "scale": 1.5,
+  "maxHealth": 300.0,
+  "defense": 0.2,
+  "kroinReward": 1500,
+  "xpReward": 2000,
+  "spells": [
+    "LIGHTNING_BOLT",
+    "CHAIN_LIGHTNING",
+    "THUNDERWAVE",
+    "TELEPORTATION"
+  ],
+  "location": {
+    "world": "world",
+    "x": 3310.0,
+    "y": 70.0,
+    "z": 784.0
+  },
+  "respawnSeconds": 1800,
+  "customLoot": [
+    { "material": "tempest_trident", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
+    { "material": "HEART_OF_THE_SEA", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
+    { "material": "NAUTILUS_SHELL", "minAmount": 2, "maxAmount": 6, "chance": 1.0 },
+    { "material": "PRISMARINE_CRYSTALS", "minAmount": 5, "maxAmount": 15, "chance": 1.0 }
+  ]
+}

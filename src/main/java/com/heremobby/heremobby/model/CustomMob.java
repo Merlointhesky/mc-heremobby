@@ -10,6 +10,7 @@ public class CustomMob {
     private Equipment equipment;
     private SpawnConditions spawnConditions;
     private long kroinReward = 1;
+    private int xpReward = -1;
     private double scale = 1.0;
     private double maxHealth = -1;
     private double defense = 0;
@@ -42,6 +43,14 @@ public class CustomMob {
 
     public long getKroinReward() {
         return kroinReward;
+    }
+
+    public int getXpReward() {
+        return xpReward;
+    }
+
+    public void setXpReward(int xpReward) {
+        this.xpReward = xpReward;
     }
 
     public double getScale() {

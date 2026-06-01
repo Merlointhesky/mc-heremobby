@@ -1,0 +1,14 @@
+{
+  "name": "§b§lTempest Trident X",
+  "material": "TRIDENT",
+  "enchants": {
+    "impaling": 10,
+    "loyalty": 10,
+    "channeling": 10,
+    "riptide": 10,
+    "unbreaking": 10,
+    "mending": 10
+  },
+  "sellable": true,
+  "customPrice": 20000
+}

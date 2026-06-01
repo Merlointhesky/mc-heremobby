@@ -1,0 +1,18 @@
+{
+  "name": "§4§lWorld War X",
+  "material": "MACE",
+  "enchants": {
+    "density": 10,
+    "breach": 10,
+    "wind_burst": 10,
+    "sharpness": 10,
+    "smite": 10,
+    "bane_of_arthropods": 10,
+    "fire_aspect": 10,
+    "knockback": 10,
+    "unbreaking": 10,
+    "mending": 10
+  },
+  "sellable": true,
+  "customPrice": 30000
+}

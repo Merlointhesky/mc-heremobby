@@ -13,9 +13,11 @@ public class StandardOverrides {
 
     public static class MobOverride {
         private long kroinReward;
+        private int xpReward = -1;
         private List<CustomMob.LootItem> customLoot;
 
         public long getKroinReward() { return kroinReward; }
+        public int getXpReward() { return xpReward; }
         public List<CustomMob.LootItem> getCustomLoot() { return customLoot; }
     }
 }

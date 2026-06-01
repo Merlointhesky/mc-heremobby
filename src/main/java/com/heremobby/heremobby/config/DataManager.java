@@ -80,6 +80,8 @@ public class DataManager {
                     if (item != null) {
                         if (item instanceof CustomMob mob) {
                             mob.setId(file.getName().replace(".json", ""));
+                        } else if (item instanceof CustomItem ci) {
+                            ci.setId(file.getName().replace(".json", ""));
                         }
                         list.add(item);
                     }

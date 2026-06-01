@@ -1,0 +1,28 @@
+{
+  "id": "void_necromancer",
+  "displayName": "§8§lVoid Necromancer",
+  "baseType": "WITHER_SKELETON",
+  "scale": 2.2,
+  "maxHealth": 400.0,
+  "defense": 0.25,
+  "kroinReward": 1200,
+  "xpReward": 1500,
+  "spells": [
+    "MAGE_HAND",
+    "GRAVITY_DROP",
+    "CHAIN_LIGHTNING"
+  ],
+  "location": {
+    "world": "world",
+    "x": 818.0,
+    "y": 87.0,
+    "z": 1059.0
+  },
+  "respawnSeconds": 1800,
+  "customLoot": [
+    { "material": "voidpiercer", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
+    { "material": "WITHER_SKELETON_SKULL", "minAmount": 1, "maxAmount": 3, "chance": 1.0 },
+    { "material": "NETHERITE_UPGRADE_SMITHING_TEMPLATE", "minAmount": 1, "maxAmount": 1, "chance": 0.3 },
+    { "material": "OBSIDIAN", "minAmount": 5, "maxAmount": 15, "chance": 1.0 }
+  ]
+}

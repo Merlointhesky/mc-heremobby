@@ -1,0 +1,14 @@
+{
+  "name": "§8§lVoidpiercer X",
+  "material": "BOW",
+  "enchants": {
+    "power": 10,
+    "punch": 10,
+    "flame": 10,
+    "infinity": 10,
+    "unbreaking": 10,
+    "mending": 10
+  },
+  "sellable": true,
+  "customPrice": 20000
+}

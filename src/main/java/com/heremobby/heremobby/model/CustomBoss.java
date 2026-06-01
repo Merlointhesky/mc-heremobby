@@ -9,6 +9,7 @@ public class CustomBoss {
     private CustomMob.Equipment equipment;
     private List<CustomMob.LootItem> customLoot;
     private long kroinReward = 20;
+    private int xpReward = -1;
     private double scale = 1.0;
     private double maxHealth = -1;
     private double defense = 0;
@@ -22,6 +23,7 @@ public class CustomBoss {
     public CustomMob.Equipment getEquipment() { return equipment; }
     public List<CustomMob.LootItem> getCustomLoot() { return customLoot; }
     public long getKroinReward() { return kroinReward; }
+    public int getXpReward() { return xpReward; }
     public double getScale() { return scale; }
     public double getMaxHealth() { return maxHealth; }
     public double getDefense() { return defense; }

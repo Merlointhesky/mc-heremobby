@@ -1,0 +1,30 @@
+{
+  "id": "infernal_pyromancer",
+  "displayName": "§cInfernal Pyromancer",
+  "baseType": "WITCH",
+  "scale": 1.0,
+  "maxHealth": 100.0,
+  "defense": 0.0,
+  "kroinReward": 150,
+  "xpReward": 250,
+  "spells": [
+    "FLAMETHROWER",
+    "RAIN_OF_FIRE",
+    "TELEPORTATION"
+  ],
+  "spawnConditions": {
+    "chance": 0.05,
+    "biomes": [
+      "DESERT",
+      "NETHER_WASTES"
+    ],
+    "time": "BOTH",
+    "minLight": 0,
+    "maxLight": 15
+  },
+  "customLoot": [
+    { "material": "BLAZE_ROD", "minAmount": 1, "maxAmount": 3, "chance": 1.0 },
+    { "material": "FIRE_CHARGE", "minAmount": 2, "maxAmount": 5, "chance": 1.0 },
+    { "material": "MAGMA_CREAM", "minAmount": 1, "maxAmount": 3, "chance": 1.0 }
+  ]
+}

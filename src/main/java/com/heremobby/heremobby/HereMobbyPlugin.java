@@ -30,6 +30,10 @@ public class HereMobbyPlugin extends JavaPlugin {
     public void onEnable() {
         instance = this;
         
+        // Save default config overrides first so DataManager loads them
+        saveResource("mobs.json", false);
+        saveResource("bosses.json", false);
+        
         // Initialize Managers
         this.dataManager = new DataManager(this);
         this.mobManager = new MobManager(this, this.dataManager);
@@ -40,7 +44,7 @@ public class HereMobbyPlugin extends JavaPlugin {
 
         // Register Listeners
         var pm = getServer().getPluginManager();
-        pm.registerEvents(new MobListener(this.mobManager, this.dataManager), this);
+        pm.registerEvents(new MobListener(this, this.mobManager, this.dataManager), this);
         pm.registerEvents(new InfoListener(), this);
         pm.registerEvents(new SpellListener(this), this);
         pm.registerEvents(new BossPoiseListener(this.mobManager), this);
@@ -63,9 +67,24 @@ public class HereMobbyPlugin extends JavaPlugin {
         if (!petsDir.exists()) petsDir.mkdirs();
         File wildDir = new File(getDataFolder(), "wild_animals");
         if (!wildDir.exists()) wildDir.mkdirs();
+        File customMobsDir = new File(getDataFolder(), "custom_mobs");
+        if (!customMobsDir.exists()) customMobsDir.mkdirs();
+        File customBossesDir = new File(getDataFolder(), "custom_bosses");
+        if (!customBossesDir.exists()) customBossesDir.mkdirs();
+        File customItemsDir = new File(getDataFolder(), "custom_items");
+        if (!customItemsDir.exists()) customItemsDir.mkdirs();
         
         saveResource("mounts/rideable_rocket.yml", false);
         saveResource("pets/lamp.yml", false);
+        saveResource("custom_bosses/overworld_dragon.json", false);
+        saveResource("custom_bosses/void_necromancer.json", false);
+        saveResource("custom_bosses/storm_archmage.json", false);
+        saveResource("custom_bosses/deep_dark_guardian.json", false);
+        saveResource("custom_mobs/infernal_pyromancer.json", false);
+        saveResource("custom_items/dragon_slayer.json", false);
+        saveResource("custom_items/world_war.json", false);
+        saveResource("custom_items/voidpiercer.json", false);
+        saveResource("custom_items/tempest_trident.json", false);
 
         // Load Custom Items and Recipes
         this.itemRegistry.loadConfig();

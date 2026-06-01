@@ -1,0 +1,17 @@
+{
+  "name": "§c§lDragon Slayer X",
+  "material": "NETHERITE_SWORD",
+  "enchants": {
+    "sharpness": 10,
+    "smite": 10,
+    "bane_of_arthropods": 10,
+    "fire_aspect": 10,
+    "knockback": 10,
+    "looting": 10,
+    "sweeping_edge": 10,
+    "unbreaking": 10,
+    "mending": 10
+  },
+  "sellable": true,
+  "customPrice": 25000
+}
