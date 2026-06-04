@@ -192,6 +192,13 @@ public class MobListener implements Listener {
     }
 
     @EventHandler
+    public void onEntitiesUnload(org.bukkit.event.world.EntitiesUnloadEvent event) {
+        for (Entity entity : event.getEntities()) {
+            mobManager.removeActiveBoss(entity.getUniqueId());
+        }
+    }
+
+    @EventHandler
     public void onEntityChangeBlock(org.bukkit.event.entity.EntityChangeBlockEvent event) {
         if (event.getEntityType() == org.bukkit.entity.EntityType.ENDER_DRAGON) {
             Entity dragon = event.getEntity();

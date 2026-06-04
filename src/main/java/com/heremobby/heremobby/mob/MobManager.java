@@ -56,7 +56,14 @@ public class MobManager {
 
     public void registerExistingEntity(Entity entity) {
         if (!(entity instanceof Mob mob)) return;
-        if (activeBosses.containsKey(mob.getUniqueId())) return; // Already registered
+        
+        ActiveBoss existing = activeBosses.get(mob.getUniqueId());
+        if (existing != null) {
+            if (existing.getEntity() == mob && mob.isValid()) {
+                return; // Already registered and valid
+            }
+            removeActiveBoss(mob.getUniqueId());
+        }
 
         // Check if it's a custom boss
         var bossConfig = getCustomBossConfig(mob);
@@ -289,6 +296,9 @@ public class MobManager {
     private void startBossBarUpdateTask() {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (ActiveBoss activeBoss : activeBosses.values()) {
+                // Update leash (do this even if bossBar is null, in case a boss has no boss bar but is still a boss)
+                checkBossLeash(activeBoss);
+
                 BossBar bossBar = activeBoss.getBossBar();
                 if (bossBar == null) continue;
 
@@ -313,6 +323,30 @@ public class MobManager {
                 }
             }
         }, 20L, 20L); // Every second
+    }
+
+    private void checkBossLeash(ActiveBoss activeBoss) {
+        Mob entity = activeBoss.getEntity();
+        if (entity == null || !entity.isValid() || entity.isDead()) return;
+
+        var bossConfigOpt = getCustomBossConfig(entity);
+        if (bossConfigOpt.isEmpty()) return;
+
+        CustomBoss config = bossConfigOpt.get();
+        if (config.getLocation() == null) return;
+
+        World world = Bukkit.getWorld(config.getLocation().getWorld());
+        if (world == null || !entity.getWorld().equals(world)) return;
+
+        Location spawnLoc = new Location(world, config.getLocation().getX(), config.getLocation().getY(), config.getLocation().getZ());
+        double distSq = entity.getLocation().distanceSquared(spawnLoc);
+        double maxDist = 48.0; // 48 blocks leash radius
+        if (distSq > maxDist * maxDist) {
+            entity.teleport(spawnLoc);
+            world.spawnParticle(org.bukkit.Particle.PORTAL, spawnLoc, 30, 0.5, 1.0, 0.5, 0.1);
+            world.playSound(spawnLoc, org.bukkit.Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f);
+            entity.setTarget(null);
+        }
     }
 
     private boolean isBossAlive(String bossId) {

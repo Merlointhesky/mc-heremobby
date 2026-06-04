@@ -10,6 +10,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,6 +86,51 @@ public class HereMobbyCommand implements CommandExecutor, TabCompleter {
                 }
                 player.sendMessage("§cCould not find a custom mob or boss with ID/name: " + id);
                 break;
+            case "kill":
+                if (!player.hasPermission("heremobby.admin")) {
+                    player.sendMessage("§cYou don't have permission!");
+                    return true;
+                }
+                if (args.length < 2) {
+                    Entity target = player.getTargetEntity(10);
+                    if (target instanceof LivingEntity living && (mobManager.getCustomBossConfig(target).isPresent() || mobManager.getCustomMobConfig(target).isPresent())) {
+                        living.damage(living.getHealth() + 99999.0, player);
+                        player.sendMessage("§aKilled looked-at custom entity: " + target.getName());
+                        return true;
+                    }
+                    player.sendMessage("§cUsage: /heremobby kill <id> or look at a custom entity and run `/heremobby kill`");
+                    return true;
+                }
+                String killId = args[1];
+                Entity nearest = null;
+                double nearestDist = Double.MAX_VALUE;
+                for (Entity e : player.getWorld().getEntities()) {
+                    if (e instanceof LivingEntity && !e.isDead()) {
+                        var bossOpt = mobManager.getCustomBossConfig(e);
+                        if (bossOpt.isPresent() && bossOpt.get().getId().equalsIgnoreCase(killId)) {
+                            double dist = player.getLocation().distanceSquared(e.getLocation());
+                            if (dist < nearestDist) {
+                                nearestDist = dist;
+                                nearest = e;
+                            }
+                        }
+                        var mobOpt = mobManager.getCustomMobConfig(e);
+                        if (mobOpt.isPresent() && mobOpt.get().getId().equalsIgnoreCase(killId)) {
+                            double dist = player.getLocation().distanceSquared(e.getLocation());
+                            if (dist < nearestDist) {
+                                nearestDist = dist;
+                                nearest = e;
+                            }
+                        }
+                    }
+                }
+                if (nearest != null) {
+                    ((LivingEntity) nearest).damage(((LivingEntity) nearest).getHealth() + 99999.0, player);
+                    player.sendMessage("§aKilled nearest custom entity: " + nearest.getName());
+                } else {
+                    player.sendMessage("§cCould not find any active custom entity with ID: " + killId);
+                }
+                break;
             default:
                 return false;
         }
@@ -94,11 +141,11 @@ public class HereMobbyCommand implements CommandExecutor, TabCompleter {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("info", "reload", "spawn").stream()
+            return Arrays.asList("info", "reload", "spawn", "kill").stream()
                     .filter(s -> s.startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }
-        if (args.length == 2 && args[0].equalsIgnoreCase("spawn")) {
+        if (args.length == 2 && (args[0].equalsIgnoreCase("spawn") || args[0].equalsIgnoreCase("kill"))) {
             List<String> options = new ArrayList<>();
             options.addAll(dataManager.getCustomBosses().stream().map(CustomBoss::getId).collect(Collectors.toList()));
             options.addAll(dataManager.getCustomMobs().stream().map(CustomMob::getId).collect(Collectors.toList()));
