@@ -4,7 +4,7 @@
       "kroinReward": 1000,
       "xpReward": 5000,
       "customLoot": [
-        { "material": "dragon_slayer", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
+        { "material": "dimension_slicer", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
         { "material": "DRAGON_BREATH", "minAmount": 5, "maxAmount": 10, "chance": 1.0 },
         { "material": "DRAGON_EGG", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
         { "material": "ELYTRA", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },

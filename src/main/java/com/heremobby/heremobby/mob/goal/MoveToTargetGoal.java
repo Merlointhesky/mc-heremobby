@@ -39,7 +39,20 @@ public class MoveToTargetGoal implements Goal<Mob> {
     public void tick() {
         LivingEntity target = mob.getTarget();
         if (target != null) {
-            mob.getPathfinder().moveTo(target.getLocation(), speed);
+            if (!mob.hasGravity()) {
+                // Hover 4 blocks above the target
+                org.bukkit.Location dest = target.getLocation().add(0, 4.0, 0);
+                org.bukkit.util.Vector direction = dest.toVector().subtract(mob.getLocation().toVector());
+                double distSq = direction.lengthSquared();
+                if (distSq > 1.0) {
+                    direction.normalize().multiply(speed * 0.25);
+                    mob.setVelocity(direction);
+                } else {
+                    mob.setVelocity(new org.bukkit.util.Vector(0, 0, 0));
+                }
+            } else {
+                mob.getPathfinder().moveTo(target.getLocation(), speed);
+            }
         }
     }
 

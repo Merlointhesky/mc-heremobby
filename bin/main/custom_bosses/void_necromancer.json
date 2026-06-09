@@ -3,7 +3,7 @@
   "displayName": "§8§lVoid Necromancer",
   "baseType": "WITHER_SKELETON",
   "scale": 2.2,
-  "maxHealth": 400.0,
+  "maxHealth": 4000.0,
   "defense": 0.25,
   "kroinReward": 1200,
   "xpReward": 1500,

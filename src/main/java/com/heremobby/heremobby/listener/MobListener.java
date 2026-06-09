@@ -43,6 +43,17 @@ public class MobListener implements Listener {
         double defense = 0;
         var bossConfig = mobManager.getCustomBossConfig(entity);
         if (bossConfig.isPresent()) {
+            // Mace immunity check for Void Necromancer
+            if ("void_necromancer".equals(bossConfig.get().getId()) && event instanceof org.bukkit.event.entity.EntityDamageByEntityEvent edbe) {
+                if (edbe.getDamager() instanceof Player player) {
+                    ItemStack mainHand = player.getInventory().getItemInMainHand();
+                    if (mainHand != null && mainHand.getType() == Material.MACE) {
+                        event.setCancelled(true);
+                        entity.getWorld().playSound(entity.getLocation(), org.bukkit.Sound.ITEM_SHIELD_BLOCK, 1.0f, 1.0f);
+                        return;
+                    }
+                }
+            }
             defense = bossConfig.get().getDefense();
         } else {
             var mobConfig = mobManager.getCustomMobConfig(entity);

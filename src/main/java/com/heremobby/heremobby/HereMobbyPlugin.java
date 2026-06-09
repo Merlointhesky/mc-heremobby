@@ -76,12 +76,12 @@ public class HereMobbyPlugin extends JavaPlugin {
         
         saveResource("mounts/rideable_rocket.yml", false);
         saveResource("pets/lamp.yml", false);
-        saveResource("custom_bosses/overworld_dragon.json", false);
+        saveResource("custom_bosses/overworld_wither.json", false);
         saveResource("custom_bosses/void_necromancer.json", false);
         saveResource("custom_bosses/storm_archmage.json", false);
         saveResource("custom_bosses/deep_dark_guardian.json", false);
         saveResource("custom_mobs/infernal_pyromancer.json", false);
-        saveResource("custom_items/dragon_slayer.json", false);
+        saveResource("custom_items/dimension_slicer.json", false);
         saveResource("custom_items/world_war.json", false);
         saveResource("custom_items/voidpiercer.json", false);
         saveResource("custom_items/tempest_trident.json", false);

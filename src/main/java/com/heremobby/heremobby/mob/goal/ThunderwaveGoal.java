@@ -33,9 +33,23 @@ public class ThunderwaveGoal extends AbstractSpellGoal {
         boss.getWorld().spawnParticle(Particle.CLOUD, boss.getLocation(), 100, 3, 1, 3, 0.2);
 
         // Mechanics
-        boss.getNearbyEntities(6, 4, 6).forEach(e -> {
+        double tempRange = 6.0;
+        double tempForce = 1.8;
+
+        org.bukkit.persistence.PersistentDataContainer pdc = boss.getPersistentDataContainer();
+        org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(plugin, "custom_boss");
+        String bossId = pdc.get(key, org.bukkit.persistence.PersistentDataType.STRING);
+        if ("storm_archmage".equals(bossId) || "overworld_wither".equals(bossId)) {
+            tempRange = 10.0;
+            tempForce = 3.0;
+        }
+
+        final double range = tempRange;
+        final double force = tempForce;
+
+        boss.getNearbyEntities(range, 4, range).forEach(e -> {
             if (e instanceof LivingEntity le && le != boss) {
-                SpellUtils.applyVelocity(boss.getLocation(), le, 1.8);
+                SpellUtils.applyVelocity(boss.getLocation(), le, force);
                 le.damage(5.0, boss);
             }
         });

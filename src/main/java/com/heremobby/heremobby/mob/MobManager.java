@@ -108,6 +108,10 @@ public class MobManager {
         // Clear Vanilla AI and register as ActiveBoss
         Bukkit.getMobGoals().removeAllGoals(mob);
 
+        if ("storm_archmage".equals(config.getId())) {
+            mob.setGravity(false);
+        }
+
         // Ensure attributes are set for combat
         AttributeInstance attackAttr = mob.getAttribute(Attribute.ATTACK_DAMAGE);
         if (attackAttr != null && attackAttr.getBaseValue() == 0) {
