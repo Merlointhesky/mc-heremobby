@@ -16,7 +16,7 @@ import org.bukkit.util.Vector;
 public class WaterCannonGoal extends AbstractSpellGoal {
 
     public WaterCannonGoal(HereMobbyPlugin plugin, ActiveBoss activeBoss) {
-        super(plugin, activeBoss, "water_cannon", 8000); // 8s cooldown
+        super(plugin, activeBoss, "water_cannon", 30000); // 30s cooldown
     }
 
     @Override
@@ -60,8 +60,17 @@ public class WaterCannonGoal extends AbstractSpellGoal {
                     if (ticks % 4 == 0) {
                         pLoc.getNearbyEntities(0.8, 0.8, 0.8).forEach(e -> {
                             if (e instanceof LivingEntity le && le != boss && hitThisTick.add(le)) {
-                                le.damage(3.0, boss);
-                                le.setVelocity(direction.clone().multiply(1.2).setY(0.3));
+                                le.damage(6.0, boss);
+                                org.bukkit.NamespacedKey customBossKey = new org.bukkit.NamespacedKey(plugin, "custom_boss");
+                                String casterId = boss.getPersistentDataContainer().get(customBossKey, org.bukkit.persistence.PersistentDataType.STRING);
+                                String victimId = le.getPersistentDataContainer().get(customBossKey, org.bukkit.persistence.PersistentDataType.STRING);
+                                double multiplier = 1.2;
+                                double yVal = 0.3;
+                                if ("overworld_wither".equals(casterId) || "overworld_wither".equals(victimId)) {
+                                    multiplier = 2.4;
+                                    yVal = 0.6;
+                                }
+                                le.setVelocity(direction.clone().multiply(multiplier).setY(yVal));
                             }
                         });
                     }

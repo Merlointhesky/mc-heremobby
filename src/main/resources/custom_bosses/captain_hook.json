@@ -1,0 +1,29 @@
+{
+  "id": "captain_hook",
+  "displayName": "§1§lCaptain Hook",
+  "baseType": "SKELETON",
+  "scale": 4.0,
+  "maxHealth": 1800.0,
+  "defense": 0.6,
+  "kroinReward": 800,
+  "xpReward": 1000,
+  "spells": [
+    "SUMMON_EXPLODING_ZOMBIES",
+    "PULL_HOOK"
+  ],
+  "location": {
+    "world": "world",
+    "x": -1779.0,
+    "y": 71.0,
+    "z": -233.0
+  },
+  "respawnSeconds": 1800,
+  "equipment": {
+    "mainHand": "TRIPWIRE_HOOK"
+  },
+  "customLoot": [
+    { "material": "captains_log", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
+    { "material": "EMERALD", "minAmount": 5, "maxAmount": 15, "chance": 1.0 },
+    { "material": "COD", "minAmount": 5, "maxAmount": 10, "chance": 1.0 }
+  ]
+}

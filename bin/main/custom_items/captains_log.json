@@ -1,0 +1,12 @@
+{
+  "name": "§1§lCaptain's Log X",
+  "material": "FISHING_ROD",
+  "enchants": {
+    "luck_of_the_sea": 10,
+    "lure": 10,
+    "unbreaking": 10,
+    "mending": 10
+  },
+  "sellable": true,
+  "customPrice": 20000
+}

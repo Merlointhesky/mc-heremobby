@@ -1,0 +1,29 @@
+{
+  "id": "rocky_the_miner",
+  "displayName": "§7§lRocky The Miner",
+  "baseType": "DROWNED",
+  "scale": 4.0,
+  "maxHealth": 2400.0,
+  "defense": 0.6,
+  "kroinReward": 1000,
+  "xpReward": 1200,
+  "spells": [
+    "THROW_TNT",
+    "SUMMON_SPIDERS"
+  ],
+  "location": {
+    "world": "world",
+    "x": 549.0,
+    "y": 73.0,
+    "z": -4582.0
+  },
+  "respawnSeconds": 1800,
+  "equipment": {
+    "mainHand": "NETHERITE_PICKAXE"
+  },
+  "customLoot": [
+    { "material": "rockys_favourite", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
+    { "material": "DIAMOND", "minAmount": 3, "maxAmount": 8, "chance": 1.0 },
+    { "material": "GOLD_INGOT", "minAmount": 5, "maxAmount": 15, "chance": 1.0 }
+  ]
+}

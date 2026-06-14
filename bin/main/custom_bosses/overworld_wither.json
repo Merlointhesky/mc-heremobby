@@ -2,9 +2,9 @@
   "id": "overworld_wither",
   "displayName": "§d§lOverworld Storm Wither",
   "baseType": "WITHER",
-  "scale": 1.0,
-  "maxHealth": 600.0,
-  "defense": 0.3,
+  "scale": 4.0,
+  "maxHealth": 1800.0,
+  "defense": 0.72,
   "kroinReward": 1000,
   "xpReward": 5000,
   "spells": [

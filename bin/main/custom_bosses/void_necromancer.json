@@ -2,15 +2,18 @@
   "id": "void_necromancer",
   "displayName": "§8§lVoid Necromancer",
   "baseType": "WITHER_SKELETON",
-  "scale": 2.2,
-  "maxHealth": 4000.0,
-  "defense": 0.25,
+  "scale": 4.0,
+  "maxHealth": 12000.0,
+  "defense": 0.75,
   "kroinReward": 1200,
   "xpReward": 1500,
   "spells": [
     "MAGE_HAND",
     "GRAVITY_DROP",
-    "CHAIN_LIGHTNING"
+    "CHAIN_LIGHTNING",
+    "FIREBALL",
+    "RAIN_OF_FIRE",
+    "FLOOR_IS_LAVA"
   ],
   "location": {
     "world": "world",

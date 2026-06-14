@@ -48,7 +48,7 @@ public class LightningBoltGoal extends AbstractSpellGoal {
         // Damage target and nearby
         targetLoc.getNearbyEntities(2, 2, 2).forEach(e -> {
             if (e instanceof LivingEntity le && le != boss) {
-                le.damage(8.0, boss);
+                le.damage(24.0, boss);
             }
         });
 

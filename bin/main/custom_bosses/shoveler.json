@@ -1,0 +1,30 @@
+{
+  "id": "shoveler",
+  "displayName": "§b§lShoveler",
+  "baseType": "SKELETON",
+  "scale": 4.0,
+  "maxHealth": 1800.0,
+  "defense": 0.6,
+  "kroinReward": 800,
+  "xpReward": 1000,
+  "spells": [
+    "SUMMON_SNOW_GOLEMS",
+    "RAY_ATTACK",
+    "ROCK_BLAST"
+  ],
+  "location": {
+    "world": "world",
+    "x": -1845.0,
+    "y": 65.0,
+    "z": -2928.0
+  },
+  "respawnSeconds": 1800,
+  "equipment": {
+    "mainHand": "NETHERITE_SHOVEL"
+  },
+  "customLoot": [
+    { "material": "shovelers_might", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
+    { "material": "IRON_INGOT", "minAmount": 5, "maxAmount": 12, "chance": 1.0 },
+    { "material": "SNOW_BLOCK", "minAmount": 4, "maxAmount": 8, "chance": 1.0 }
+  ]
+}

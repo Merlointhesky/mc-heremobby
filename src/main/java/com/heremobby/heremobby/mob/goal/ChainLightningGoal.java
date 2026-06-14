@@ -42,7 +42,7 @@ public class ChainLightningGoal extends AbstractSpellGoal {
         new BukkitRunnable() {
             int jumps = 0;
             final int maxJumps = 5;
-            double damage = 8.0;
+            double damage = 24.0;
             LivingEntity currentTarget = firstPlayer;
             final Set<LivingEntity> hitEntities = new HashSet<>();
 

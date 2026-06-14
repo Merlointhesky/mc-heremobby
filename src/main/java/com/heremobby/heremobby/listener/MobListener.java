@@ -40,11 +40,102 @@ public class MobListener implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof LivingEntity entity)) return;
 
+        // Captain Hook melee attack check (damage = 10, 15% chance for 10s stun)
+        if (event instanceof org.bukkit.event.entity.EntityDamageByEntityEvent edbe) {
+            if (edbe.getDamager() instanceof LivingEntity damager) {
+                var damagerBossConfig = mobManager.getCustomBossConfig(damager);
+                if (damagerBossConfig.isPresent() && "captain_hook".equals(damagerBossConfig.get().getId())) {
+                    event.setDamage(10.0);
+                    if (random.nextDouble() < 0.15) {
+                        final NamespacedKey stunKey = new NamespacedKey(plugin, "stunned_by_hook");
+                        org.bukkit.entity.ArmorStand tether = com.heremobby.heremobby.util.SpellUtils.immobilize(entity, stunKey);
+                        entity.getWorld().playSound(entity.getLocation(), org.bukkit.Sound.BLOCK_ANVIL_LAND, 1.0f, 1.5f);
+                        if (entity instanceof Player p) {
+                            p.sendMessage("§cYou are stunned by Captain Hook!");
+                        }
+                        org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                            if (tether.isValid()) {
+                                tether.remove();
+                            }
+                        }, 200L); // 10 seconds
+                    }
+                }
+            }
+        }
+
         double defense = 0;
         var bossConfig = mobManager.getCustomBossConfig(entity);
         if (bossConfig.isPresent()) {
-            // Mace immunity check for Void Necromancer
-            if ("void_necromancer".equals(bossConfig.get().getId()) && event instanceof org.bukkit.event.entity.EntityDamageByEntityEvent edbe) {
+            CustomBoss boss = bossConfig.get();
+            double maxHealth = entity.getAttribute(org.bukkit.attribute.Attribute.MAX_HEALTH).getValue();
+            double finalHealth = entity.getHealth() - event.getFinalDamage();
+
+            // Captain Hook 20% health trigger (Giant pufferfish)
+            if ("captain_hook".equals(boss.getId()) && !entity.getScoreboardTags().contains("triggered_puffer")) {
+                if (finalHealth <= maxHealth * 0.2) {
+                    entity.addScoreboardTag("triggered_puffer");
+                    entity.getWorld().playSound(entity.getLocation(), org.bukkit.Sound.ENTITY_PUFFER_FISH_BLOW_UP, 2.0f, 0.5f);
+                    
+                    org.bukkit.entity.PufferFish puffer = (org.bukkit.entity.PufferFish) entity.getWorld().spawnEntity(entity.getLocation(), org.bukkit.entity.EntityType.PUFFERFISH);
+                    puffer.setPuffState(2);
+                    puffer.setInvulnerable(true);
+                    var scaleAttr = puffer.getAttribute(org.bukkit.attribute.Attribute.SCALE);
+                    if (scaleAttr != null) {
+                        scaleAttr.setBaseValue(4.0);
+                    }
+                    
+                    final LivingEntity bossEntity = entity;
+                    new org.bukkit.scheduler.BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (puffer.isValid()) {
+                                org.bukkit.Location loc = puffer.getLocation();
+                                loc.getWorld().spawnParticle(org.bukkit.Particle.EXPLOSION_EMITTER, loc, 3, 1.0, 1.0, 1.0, 0.1);
+                                loc.getWorld().spawnParticle(org.bukkit.Particle.HAPPY_VILLAGER, loc, 100, 5.0, 2.0, 5.0, 0.1);
+                                loc.getWorld().playSound(loc, org.bukkit.Sound.ENTITY_GENERIC_EXPLODE, 2.0f, 0.8f);
+                                
+                                loc.getNearbyEntities(10.0, 10.0, 10.0).forEach(near -> {
+                                    if (near instanceof LivingEntity le && le != bossEntity && !(near instanceof org.bukkit.entity.PufferFish)) {
+                                        le.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.POISON, 200, 1));
+                                        le.damage(4.0, bossEntity);
+                                    }
+                                });
+                                puffer.remove();
+                            }
+                        }
+                    }.runTaskLater(plugin, 100L);
+                }
+            }
+
+            // Harvest Witch 20% health trigger (Heal and summon witches)
+            if ("harvest_witch".equals(boss.getId()) && !entity.getScoreboardTags().contains("triggered_heal")) {
+                if (finalHealth <= maxHealth * 0.2) {
+                    entity.addScoreboardTag("triggered_heal");
+                    event.setCancelled(true);
+                    entity.setHealth(maxHealth * 0.8);
+                    entity.getWorld().playSound(entity.getLocation(), org.bukkit.Sound.ENTITY_EVOKER_PREPARE_WOLOLO, 2.0f, 1.0f);
+                    entity.getWorld().spawnParticle(org.bukkit.Particle.HAPPY_VILLAGER, entity.getLocation(), 100, 1.0, 2.0, 1.0, 0.1);
+                    
+                    for (int i = 0; i < 5; i++) {
+                        org.bukkit.Location spawnLoc = entity.getLocation().add(
+                            (Math.random() - 0.5) * 6,
+                            0,
+                            (Math.random() - 0.5) * 6
+                        );
+                        org.bukkit.entity.Witch witch = (org.bukkit.entity.Witch) entity.getWorld().spawnEntity(spawnLoc, org.bukkit.entity.EntityType.WITCH);
+                        witch.addScoreboardTag("summoned_witch");
+                        if (entity instanceof org.bukkit.entity.Mob mobEntity && mobEntity.getTarget() != null) {
+                            witch.setTarget(mobEntity.getTarget());
+                        }
+                        entity.getWorld().spawnParticle(org.bukkit.Particle.WITCH, spawnLoc, 30, 0.5, 1.0, 0.5, 0.05);
+                        entity.getWorld().playSound(spawnLoc, org.bukkit.Sound.ENTITY_WITCH_AMBIENT, 1.0f, 1.0f);
+                    }
+                    return;
+                }
+            }
+
+            // Mace immunity check for Void Necromancer and Overworld Wither
+            if (("void_necromancer".equals(bossConfig.get().getId()) || "overworld_wither".equals(bossConfig.get().getId())) && event instanceof org.bukkit.event.entity.EntityDamageByEntityEvent edbe) {
                 if (edbe.getDamager() instanceof Player player) {
                     ItemStack mainHand = player.getInventory().getItemInMainHand();
                     if (mainHand != null && mainHand.getType() == Material.MACE) {
@@ -74,6 +165,10 @@ public class MobListener implements Listener {
     public void onEntityDeath(EntityDeathEvent event) {
         LivingEntity entity = event.getEntity();
         Player killer = entity.getKiller();
+
+        if (entity.getScoreboardTags().contains("exploding_zombie")) {
+            entity.getWorld().createExplosion(entity.getLocation(), 2.5f, false, false);
+        }
 
         double reward = 2.0; // Default standard mob reward
         List<CustomMob.LootItem> customLoot = null;
@@ -262,5 +357,55 @@ public class MobListener implements Listener {
         org.bukkit.enchantments.Enchantment enchant = org.bukkit.Registry.ENCHANTMENT.get(key);
         if (enchant != null) return enchant;
         return org.bukkit.enchantments.Enchantment.getByName(name.toUpperCase());
+    }
+
+    @EventHandler
+    public void onProjectileHit(org.bukkit.event.entity.ProjectileHitEvent event) {
+        if (event.getHitEntity() instanceof Player player) {
+            if (event.getEntity() instanceof org.bukkit.entity.Snowball snowball) {
+                if (snowball.getShooter() instanceof org.bukkit.entity.Snowman snowman) {
+                    if (snowman.getScoreboardTags().contains("evil_snow_golem")) {
+                        player.damage(2.0, snowman);
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityTarget(org.bukkit.event.entity.EntityTargetLivingEntityEvent event) {
+        Entity entity = event.getEntity();
+        boolean isMinion = entity.getScoreboardTags().contains("evil_snow_golem") ||
+                           entity.getScoreboardTags().contains("summoned_wolf") ||
+                           entity.getScoreboardTags().contains("summoned_spider") ||
+                           entity.getScoreboardTags().contains("exploding_zombie") ||
+                           entity.getScoreboardTags().contains("summoned_baby_zombie");
+
+        if (!isMinion) return;
+
+        LivingEntity currentTarget = event.getTarget();
+
+        // If target is not a player (either null, boss, or something else)
+        if (!(currentTarget instanceof Player)) {
+            // Find nearest player in survival/adventure mode
+            Player targetPlayer = null;
+            double nearestDist = 900; // 30 block radius
+            for (Player p : entity.getWorld().getPlayers()) {
+                if (p.getGameMode() == org.bukkit.GameMode.SURVIVAL || p.getGameMode() == org.bukkit.GameMode.ADVENTURE) {
+                    double dist = p.getLocation().distanceSquared(entity.getLocation());
+                    if (dist < nearestDist) {
+                        nearestDist = dist;
+                        targetPlayer = p;
+                    }
+                }
+            }
+
+            if (targetPlayer != null) {
+                event.setTarget(targetPlayer);
+            } else {
+                event.setTarget(null);
+                event.setCancelled(true);
+            }
+        }
     }
 }

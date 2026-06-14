@@ -15,7 +15,7 @@ import org.bukkit.util.Vector;
 public class GravityDropGoal extends AbstractSpellGoal {
 
     public GravityDropGoal(HereMobbyPlugin plugin, ActiveBoss activeBoss) {
-        super(plugin, activeBoss, "gravitydrop", 18000); // 18s cooldown
+        super(plugin, activeBoss, "gravitydrop", 30000); // 30s cooldown
     }
 
     @Override
@@ -47,7 +47,7 @@ public class GravityDropGoal extends AbstractSpellGoal {
 
                 if (ticks < 20) {
                     // Lift stage
-                    target.setVelocity(new Vector(0, 0.3, 0));
+                    target.setVelocity(new Vector(0, 0.6, 0));
                     target.getWorld().spawnParticle(Particle.ENCHANT, target.getLocation(), 10, 0.5, 0.5, 0.5, 0.1);
                 } else if (ticks == 20) {
                     // Pause/Hold stage
@@ -55,7 +55,7 @@ public class GravityDropGoal extends AbstractSpellGoal {
                     target.getWorld().playSound(target.getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0f, 1.5f);
                 } else if (ticks == 25) {
                     // Slam stage
-                    target.setVelocity(new Vector(0, -2.0, 0));
+                    target.setVelocity(new Vector(0, -1.0, 0));
                     target.getWorld().spawnParticle(Particle.ANGRY_VILLAGER, target.getLocation().add(0, 1, 0), 5);
                 } else if (ticks > 30) {
                     // End

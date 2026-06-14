@@ -64,7 +64,7 @@ public class RockBlastGoal extends AbstractSpellGoal {
 
                 for (org.bukkit.entity.Entity e : currentLoc.getNearbyEntities(0.8, 0.8, 0.8)) {
                     if (e instanceof LivingEntity le && le != boss) {
-                        le.damage(5.0, boss);
+                        le.damage(15.0, boss);
                         shatter();
                         activeBoss.stopCurrentSpell();
                         return;
@@ -81,7 +81,7 @@ public class RockBlastGoal extends AbstractSpellGoal {
                 // Flint shards deal minor damage
                 currentLoc.getNearbyEntities(2.0, 2.0, 2.0).forEach(e -> {
                     if (e instanceof LivingEntity le && le != boss) {
-                        le.damage(2.0, boss);
+                        le.damage(6.0, boss);
                     }
                 });
             }

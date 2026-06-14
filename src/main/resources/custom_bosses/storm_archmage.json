@@ -2,9 +2,9 @@
   "id": "storm_archmage",
   "displayName": "§b§lStorm Archmage",
   "baseType": "ILLUSIONER",
-  "scale": 1.5,
-  "maxHealth": 300.0,
-  "defense": 0.2,
+  "scale": 4.0,
+  "maxHealth": 900.0,
+  "defense": 0.6,
   "kroinReward": 1500,
   "xpReward": 2000,
   "spells": [

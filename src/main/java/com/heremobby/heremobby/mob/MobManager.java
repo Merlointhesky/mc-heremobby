@@ -68,14 +68,24 @@ public class MobManager {
         // Check if it's a custom boss
         var bossConfig = getCustomBossConfig(mob);
         if (bossConfig.isPresent()) {
-            setupCustomBossGoals(mob, bossConfig.get());
+            CustomBoss config = bossConfig.get();
+            applyEquipment(mob, config.getEquipment());
+            applyScale(mob, config.getScale());
+            applyHealth(mob, config.getMaxHealth());
+            applyEntityProperties(mob);
+            setupCustomBossGoals(mob, config);
             return;
         }
 
         // Check if it's a custom mob
         var mobConfig = getCustomMobConfig(mob);
         if (mobConfig.isPresent()) {
-            setupCustomMobGoals(mob, mobConfig.get());
+            CustomMob config = mobConfig.get();
+            applyEquipment(mob, config.getEquipment());
+            applyScale(mob, config.getScale());
+            applyHealth(mob, config.getMaxHealth());
+            applyEntityProperties(mob);
+            setupCustomMobGoals(mob, config);
         }
     }
 
@@ -94,28 +104,37 @@ public class MobManager {
 
         var goals = Bukkit.getMobGoals();
         goals.addGoal(mob, 1, new TargetNearestPlayerGoal(plugin, mob));
-        goals.addGoal(mob, 2, new MoveToTargetGoal(plugin, mob, 1.2));
-        goals.addGoal(mob, 3, new MeleeAttackGoal(plugin, mob));
 
+        int priority = 2;
         if (config.getSpells() != null && !config.getSpells().isEmpty()) {
             for (String spellName : config.getSpells()) {
-                addSpellGoal(mob, activeCaster, spellName);
+                addSpellGoal(mob, activeCaster, spellName, priority);
+                priority++;
             }
         }
+
+        goals.addGoal(mob, priority, new MoveToTargetGoal(plugin, mob, 1.2));
+        goals.addGoal(mob, priority + 1, new MeleeAttackGoal(plugin, mob));
     }
 
     public void setupCustomBossGoals(Mob mob, CustomBoss config) {
         // Clear Vanilla AI and register as ActiveBoss
         Bukkit.getMobGoals().removeAllGoals(mob);
 
-        if ("storm_archmage".equals(config.getId())) {
+        if ("storm_archmage".equals(config.getId()) || "overworld_wither".equals(config.getId())) {
             mob.setGravity(false);
         }
 
-        // Ensure attributes are set for combat
+        // Ensure attributes are set for combat (base 10.0 for unarmed, 20.0 for armed)
         AttributeInstance attackAttr = mob.getAttribute(Attribute.ATTACK_DAMAGE);
-        if (attackAttr != null && attackAttr.getBaseValue() == 0) {
-            attackAttr.setBaseValue(5.0); // Bosses should hit harder
+        if (attackAttr != null) {
+            EntityEquipment ee = mob.getEquipment();
+            boolean hasWeapon = ee != null && ee.getItemInMainHand() != null && ee.getItemInMainHand().getType() != org.bukkit.Material.AIR;
+            if (hasWeapon) {
+                attackAttr.setBaseValue(20.0);
+            } else {
+                attackAttr.setBaseValue(10.0);
+            }
         }
 
         ActiveBoss activeBoss = new ActiveBoss(mob);
@@ -132,18 +151,25 @@ public class MobManager {
         // Assign custom goals for the boss
         var goals = Bukkit.getMobGoals();
         goals.addGoal(mob, 1, new TargetNearestPlayerGoal(plugin, mob));
-        goals.addGoal(mob, 2, new MoveToTargetGoal(plugin, mob, 1.2));
-        goals.addGoal(mob, 3, new MeleeAttackGoal(plugin, mob));
 
+        int priority = 2;
         if (config.getSpells() != null) {
             for (String spellName : config.getSpells()) {
-                addSpellGoal(mob, activeBoss, spellName);
+                addSpellGoal(mob, activeBoss, spellName, priority);
+                priority++;
             }
         } else {
             // Default spells if none specified (for backward compatibility or convenience)
-            addSpellGoal(mob, activeBoss, "FLAMETHROWER");
-            addSpellGoal(mob, activeBoss, "THUNDERWAVE");
-            addSpellGoal(mob, activeBoss, "MAGE_HAND");
+            addSpellGoal(mob, activeBoss, "FLAMETHROWER", priority++);
+            addSpellGoal(mob, activeBoss, "THUNDERWAVE", priority++);
+            addSpellGoal(mob, activeBoss, "MAGE_HAND", priority++);
+        }
+
+        goals.addGoal(mob, priority, new MoveToTargetGoal(plugin, mob, 1.2));
+        if ("shoveler".equals(config.getId())) {
+            goals.addGoal(mob, priority + 1, new ShovelerMeleeGoal(plugin, mob));
+        } else {
+            goals.addGoal(mob, priority + 1, new MeleeAttackGoal(plugin, mob));
         }
     }
 
@@ -159,6 +185,7 @@ public class MobManager {
         applyEquipment(entity, config.getEquipment());
         applyScale(entity, config.getScale());
         applyHealth(entity, config.getMaxHealth());
+        applyEntityProperties(entity);
         entity.getPersistentDataContainer().set(customMobKey, PersistentDataType.STRING, config.getId());
 
         if (entity instanceof Mob mob) {
@@ -171,8 +198,12 @@ public class MobManager {
         if (world == null) return;
 
         Location loc = new Location(world, config.getLocation().getX(), config.getLocation().getY(), config.getLocation().getZ());
+        spawnCustomBoss(config, loc);
+    }
+
+    public void spawnCustomBoss(CustomBoss config, Location loc) {
         EntityType type = EntityType.valueOf(config.getBaseType().toUpperCase());
-        LivingEntity entity = (LivingEntity) world.spawnEntity(loc, type);
+        LivingEntity entity = (LivingEntity) loc.getWorld().spawnEntity(loc, type);
 
         if (config.getDisplayName() != null) {
             entity.setCustomName(config.getDisplayName());
@@ -182,6 +213,7 @@ public class MobManager {
         applyEquipment(entity, config.getEquipment());
         applyScale(entity, config.getScale());
         applyHealth(entity, config.getMaxHealth());
+        applyEntityProperties(entity);
         entity.getPersistentDataContainer().set(customBossKey, PersistentDataType.STRING, config.getId());
 
         if (entity instanceof Mob mob) {
@@ -189,23 +221,34 @@ public class MobManager {
         }
     }
 
-    private void addSpellGoal(Mob mob, ActiveBoss activeBoss, String spellName) {
+    private void addSpellGoal(Mob mob, ActiveBoss activeBoss, String spellName, int priority) {
         var goals = Bukkit.getMobGoals();
         switch (spellName.toUpperCase()) {
-            case "FLAMETHROWER" -> goals.addGoal(mob, 3, new FlamethrowerGoal(plugin, activeBoss));
-            case "THUNDERWAVE" -> goals.addGoal(mob, 3, new ThunderwaveGoal(plugin, activeBoss));
-            case "MAGE_HAND" -> goals.addGoal(mob, 3, new MageHandGoal(plugin, activeBoss));
-            case "LIGHTNING_BOLT" -> goals.addGoal(mob, 3, new LightningBoltGoal(plugin, activeBoss));
-            case "RAIN_OF_FIRE" -> goals.addGoal(mob, 3, new RainOfFireGoal(plugin, activeBoss));
-            case "GRAVITY_DROP" -> goals.addGoal(mob, 3, new GravityDropGoal(plugin, activeBoss));
-            case "VINE_WHIP" -> goals.addGoal(mob, 3, new VineWhipGoal(plugin, activeBoss));
-            case "WATER_CANNON" -> goals.addGoal(mob, 3, new WaterCannonGoal(plugin, activeBoss));
-            case "ENERGY_BALL" -> goals.addGoal(mob, 3, new EnergyBallGoal(plugin, activeBoss));
-            case "RAY_ATTACK" -> goals.addGoal(mob, 3, new RayAttackGoal(plugin, activeBoss));
-            case "CHAIN_LIGHTNING" -> goals.addGoal(mob, 3, new ChainLightningGoal(plugin, activeBoss));
-            case "TELEPORTATION" -> goals.addGoal(mob, 3, new TeleportationGoal(plugin, activeBoss));
-            case "SAND_RAIN" -> goals.addGoal(mob, 3, new SandRainGoal(plugin, activeBoss));
-            case "ROCK_BLAST" -> goals.addGoal(mob, 3, new RockBlastGoal(plugin, activeBoss));
+            case "FLAMETHROWER" -> goals.addGoal(mob, priority, new FlamethrowerGoal(plugin, activeBoss));
+            case "THUNDERWAVE" -> goals.addGoal(mob, priority, new ThunderwaveGoal(plugin, activeBoss));
+            case "MAGE_HAND" -> goals.addGoal(mob, priority, new MageHandGoal(plugin, activeBoss));
+            case "LIGHTNING_BOLT" -> goals.addGoal(mob, priority, new LightningBoltGoal(plugin, activeBoss));
+            case "RAIN_OF_FIRE" -> goals.addGoal(mob, priority, new RainOfFireGoal(plugin, activeBoss));
+            case "GRAVITY_DROP" -> goals.addGoal(mob, priority, new GravityDropGoal(plugin, activeBoss));
+            case "VINE_WHIP" -> goals.addGoal(mob, priority, new VineWhipGoal(plugin, activeBoss));
+            case "WATER_CANNON" -> goals.addGoal(mob, priority, new WaterCannonGoal(plugin, activeBoss));
+            case "ENERGY_BALL" -> goals.addGoal(mob, priority, new EnergyBallGoal(plugin, activeBoss));
+            case "RAY_ATTACK" -> goals.addGoal(mob, priority, new RayAttackGoal(plugin, activeBoss));
+            case "CHAIN_LIGHTNING" -> goals.addGoal(mob, priority, new ChainLightningGoal(plugin, activeBoss));
+            case "TELEPORTATION" -> goals.addGoal(mob, priority, new TeleportationGoal(plugin, activeBoss));
+            case "SAND_RAIN" -> goals.addGoal(mob, priority, new SandRainGoal(plugin, activeBoss));
+            case "ROCK_BLAST" -> goals.addGoal(mob, priority, new RockBlastGoal(plugin, activeBoss));
+            case "TERRAIN_CYCLE" -> goals.addGoal(mob, priority, new TerrainCycleGoal(plugin, activeBoss));
+            case "SUMMON_BABY_ZOMBIES" -> goals.addGoal(mob, priority, new SummonBabyZombiesGoal(plugin, activeBoss));
+            case "THROW_TNT" -> goals.addGoal(mob, priority, new ThrowTNTGoal(plugin, activeBoss));
+            case "SUMMON_SPIDERS" -> goals.addGoal(mob, priority, new SummonSpidersGoal(plugin, activeBoss));
+            case "THROW_AXE" -> goals.addGoal(mob, priority, new ThrowAxeGoal(plugin, activeBoss));
+            case "SUMMON_WOLVES" -> goals.addGoal(mob, priority, new SummonWolvesGoal(plugin, activeBoss));
+            case "SUMMON_SNOW_GOLEMS" -> goals.addGoal(mob, priority, new SummonSnowGolemsGoal(plugin, activeBoss));
+            case "SUMMON_EXPLODING_ZOMBIES" -> goals.addGoal(mob, priority, new SummonExplodingZombiesGoal(plugin, activeBoss));
+            case "PULL_HOOK" -> goals.addGoal(mob, priority, new PullHookGoal(plugin, activeBoss));
+            case "FIREBALL" -> goals.addGoal(mob, priority, new FireballGoal(plugin, activeBoss));
+            case "FLOOR_IS_LAVA" -> goals.addGoal(mob, priority, new FloorIsLavaGoal(plugin, activeBoss));
         }
     }
 
@@ -234,7 +277,9 @@ public class MobManager {
     }
 
     private void applyScale(LivingEntity entity, double scale) {
-        if (scale == 1.0) return;
+        if (entity.getType() == EntityType.GIANT) {
+            scale = scale / 6.0;
+        }
         AttributeInstance scaleAttr = entity.getAttribute(Attribute.SCALE);
         if (scaleAttr != null) {
             scaleAttr.setBaseValue(scale);
@@ -268,7 +313,7 @@ public class MobManager {
                 Location spawnLoc = new Location(world, boss.getLocation().getX(), boss.getLocation().getY(), boss.getLocation().getZ());
                 // Only spawn or check if the spawn chunk is loaded.
                 // If it is not loaded, we do not attempt to check or spawn.
-                if (!spawnLoc.getChunk().isLoaded()) {
+                if (!world.isChunkLoaded(spawnLoc.getBlockX() >> 4, spawnLoc.getBlockZ() >> 4)) {
                     continue;
                 }
 
@@ -365,5 +410,20 @@ public class MobManager {
 
     public NamespacedKey getCustomBossKey() {
         return customBossKey;
+    }
+
+    private void applyEntityProperties(LivingEntity entity) {
+        if (entity instanceof org.bukkit.entity.Ageable ageable) {
+            ageable.setAdult();
+        }
+        if (entity instanceof org.bukkit.entity.Zombie zombie) {
+            zombie.setBaby(false);
+        }
+        if (entity instanceof org.bukkit.entity.PiglinAbstract piglin) {
+            piglin.setImmuneToZombification(true);
+        }
+        if (entity instanceof org.bukkit.entity.Hoglin hoglin) {
+            hoglin.setImmuneToZombification(true);
+        }
     }
 }

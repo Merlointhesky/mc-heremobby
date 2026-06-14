@@ -69,7 +69,20 @@ public class RainOfFireGoal extends AbstractSpellGoal {
                                 java.util.Set<LivingEntity> hitThisImpact = new java.util.HashSet<>();
                                 land.getNearbyEntities(1.5, 1.5, 1.5).forEach(e -> {
                                     if (e instanceof LivingEntity le && le != boss && hitThisImpact.add(le)) {
-                                        le.damage(3.0, boss);
+                                        org.bukkit.NamespacedKey customBossKey = new org.bukkit.NamespacedKey(plugin, "custom_boss");
+                                        String bossId = boss.getPersistentDataContainer().get(customBossKey, org.bukkit.persistence.PersistentDataType.STRING);
+                                        if ("void_necromancer".equals(bossId)) {
+                                            org.bukkit.damage.DamageType magicType = org.bukkit.Bukkit.getRegistry(org.bukkit.damage.DamageType.class).get(org.bukkit.NamespacedKey.minecraft("magic"));
+                                            org.bukkit.damage.DamageSource source;
+                                            if (magicType != null) {
+                                                source = org.bukkit.damage.DamageSource.builder(magicType).withDirectEntity(boss).withCausingEntity(boss).build();
+                                            } else {
+                                                source = org.bukkit.damage.DamageSource.builder(org.bukkit.damage.DamageType.MAGIC).withDirectEntity(boss).withCausingEntity(boss).build();
+                                            }
+                                            le.damage(10.0, source);
+                                        } else {
+                                            le.damage(3.0, boss);
+                                        }
                                         le.setFireTicks(60);
                                     }
                                 });

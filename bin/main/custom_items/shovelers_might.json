@@ -1,0 +1,12 @@
+{
+  "name": "§b§lShoveler's Might X",
+  "material": "NETHERITE_SHOVEL",
+  "enchants": {
+    "efficiency": 10,
+    "unbreaking": 10,
+    "fortune": 10,
+    "mending": 10
+  },
+  "sellable": true,
+  "customPrice": 20000
+}

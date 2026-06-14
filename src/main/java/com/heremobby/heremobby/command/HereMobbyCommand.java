@@ -73,7 +73,7 @@ public class HereMobbyCommand implements CommandExecutor, TabCompleter {
                 // Check custom bosses first
                 var boss = dataManager.getCustomBosses().stream().filter(b -> b.getId().equalsIgnoreCase(id)).findFirst();
                 if (boss.isPresent()) {
-                    mobManager.spawnCustomBoss(boss.get());
+                    mobManager.spawnCustomBoss(boss.get(), player.getLocation());
                     player.sendMessage("§aSpawned custom boss: " + boss.get().getDisplayName());
                     return true;
                 }

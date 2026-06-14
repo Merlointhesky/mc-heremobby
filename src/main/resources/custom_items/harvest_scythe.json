@@ -1,0 +1,12 @@
+{
+  "name": "§a§lHarvest Scythe X",
+  "material": "NETHERITE_HOE",
+  "enchants": {
+    "efficiency": 10,
+    "unbreaking": 10,
+    "fortune": 10,
+    "mending": 10
+  },
+  "sellable": true,
+  "customPrice": 20000
+}

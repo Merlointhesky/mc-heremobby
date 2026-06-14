@@ -61,7 +61,7 @@ public class FlamethrowerGoal extends AbstractSpellGoal {
                     if (ticks % 5 == 0) {
                         pLoc.getNearbyEntities(0.6, 0.6, 0.6).forEach(e -> {
                             if (e instanceof LivingEntity le && le != boss && hitThisTick.add(le)) {
-                                le.damage(2.0, boss);
+                                le.damage(4.0, boss);
                                 le.setFireTicks(40);
                             }
                         });

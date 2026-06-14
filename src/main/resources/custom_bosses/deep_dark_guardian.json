@@ -2,9 +2,9 @@
   "id": "deep_dark_guardian",
   "displayName": "§3§lDeep Dark Guardian",
   "baseType": "WARDEN",
-  "scale": 1.2,
-  "maxHealth": 800.0,
-  "defense": 0.4,
+  "scale": 4.0,
+  "maxHealth": 2400.0,
+  "defense": 0.76,
   "kroinReward": 2500,
   "xpReward": 10000,
   "spells": [
@@ -14,9 +14,9 @@
   ],
   "location": {
     "world": "world",
-    "x": -855.0,
-    "y": 64.0,
-    "z": 715.0
+    "x": -2097.0,
+    "y": 135.0,
+    "z": 563.0
   },
   "respawnSeconds": 3600,
   "customLoot": [

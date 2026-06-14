@@ -13,13 +13,13 @@ import org.bukkit.entity.LivingEntity;
 public class ThunderwaveGoal extends AbstractSpellGoal {
 
     public ThunderwaveGoal(HereMobbyPlugin plugin, ActiveBoss activeBoss) {
-        super(plugin, activeBoss, "thunderwave", 8000); // 8s cooldown
+        super(plugin, activeBoss, "thunderwave", 30000); // 30s cooldown
     }
 
     @Override
     protected boolean canActivate(LivingEntity target) {
-        // Activate if target is close (within 5 blocks)
-        return activeBoss.getEntity().getLocation().distanceSquared(target.getLocation()) < 25;
+        // Activate if target is within 20 blocks
+        return activeBoss.getEntity().getLocation().distanceSquared(target.getLocation()) < 400;
     }
 
     @Override
@@ -33,21 +33,20 @@ public class ThunderwaveGoal extends AbstractSpellGoal {
         boss.getWorld().spawnParticle(Particle.CLOUD, boss.getLocation(), 100, 3, 1, 3, 0.2);
 
         // Mechanics
-        double tempRange = 6.0;
+        double tempRange = 20.0;
         double tempForce = 1.8;
 
         org.bukkit.persistence.PersistentDataContainer pdc = boss.getPersistentDataContainer();
         org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(plugin, "custom_boss");
         String bossId = pdc.get(key, org.bukkit.persistence.PersistentDataType.STRING);
         if ("storm_archmage".equals(bossId) || "overworld_wither".equals(bossId)) {
-            tempRange = 10.0;
             tempForce = 3.0;
         }
 
         final double range = tempRange;
         final double force = tempForce;
 
-        boss.getNearbyEntities(range, 4, range).forEach(e -> {
+        boss.getNearbyEntities(range, range, range).forEach(e -> {
             if (e instanceof LivingEntity le && le != boss) {
                 SpellUtils.applyVelocity(boss.getLocation(), le, force);
                 le.damage(5.0, boss);

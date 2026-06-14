@@ -53,6 +53,7 @@ public class SpellUtils {
             s.setArms(false);
             s.setCanTick(false);
             s.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
+            s.getPersistentDataContainer().set(new NamespacedKey(key.getNamespace(), "immobilized_time"), PersistentDataType.LONG, System.currentTimeMillis());
         });
         
         stand.addPassenger(target);

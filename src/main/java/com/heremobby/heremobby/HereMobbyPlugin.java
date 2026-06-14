@@ -34,6 +34,43 @@ public class HereMobbyPlugin extends JavaPlugin {
         saveResource("mobs.json", false);
         saveResource("bosses.json", false);
         
+        // Save Default Resources
+        File mountsDir = new File(getDataFolder(), "mounts");
+        if (!mountsDir.exists()) mountsDir.mkdirs();
+        File petsDir = new File(getDataFolder(), "pets");
+        if (!petsDir.exists()) petsDir.mkdirs();
+        File wildDir = new File(getDataFolder(), "wild_animals");
+        if (!wildDir.exists()) wildDir.mkdirs();
+        File customMobsDir = new File(getDataFolder(), "custom_mobs");
+        if (!customMobsDir.exists()) customMobsDir.mkdirs();
+        File customBossesDir = new File(getDataFolder(), "custom_bosses");
+        if (!customBossesDir.exists()) customBossesDir.mkdirs();
+        File customItemsDir = new File(getDataFolder(), "custom_items");
+        if (!customItemsDir.exists()) customItemsDir.mkdirs();
+        
+        saveResource("mounts/rideable_rocket.yml", false);
+        saveResource("pets/lamp.yml", false);
+        saveResource("custom_bosses/overworld_wither.json", false);
+        saveResource("custom_bosses/void_necromancer.json", false);
+        saveResource("custom_bosses/storm_archmage.json", false);
+        saveResource("custom_bosses/deep_dark_guardian.json", false);
+        saveResource("custom_bosses/harvest_witch.json", false);
+        saveResource("custom_bosses/rocky_the_miner.json", false);
+        saveResource("custom_bosses/axe_warlord.json", false);
+        saveResource("custom_bosses/shoveler.json", false);
+        saveResource("custom_bosses/captain_hook.json", false);
+        saveResource("custom_bosses/giant_zombie.json", false);
+        saveResource("custom_mobs/infernal_pyromancer.json", false);
+        saveResource("custom_items/dimension_slicer.json", false);
+        saveResource("custom_items/world_war.json", false);
+        saveResource("custom_items/voidpiercer.json", false);
+        saveResource("custom_items/tempest_trident.json", false);
+        saveResource("custom_items/harvest_scythe.json", false);
+        saveResource("custom_items/rockys_favourite.json", false);
+        saveResource("custom_items/warlords_might.json", false);
+        saveResource("custom_items/shovelers_might.json", false);
+        saveResource("custom_items/captains_log.json", false);
+
         // Initialize Managers
         this.dataManager = new DataManager(this);
         this.mobManager = new MobManager(this, this.dataManager);
@@ -60,32 +97,6 @@ public class HereMobbyPlugin extends JavaPlugin {
         getCommand("heremobby").setExecutor(cmd);
         getCommand("heremobby").setTabCompleter(cmd);
         
-        // Save Default Resources
-        File mountsDir = new File(getDataFolder(), "mounts");
-        if (!mountsDir.exists()) mountsDir.mkdirs();
-        File petsDir = new File(getDataFolder(), "pets");
-        if (!petsDir.exists()) petsDir.mkdirs();
-        File wildDir = new File(getDataFolder(), "wild_animals");
-        if (!wildDir.exists()) wildDir.mkdirs();
-        File customMobsDir = new File(getDataFolder(), "custom_mobs");
-        if (!customMobsDir.exists()) customMobsDir.mkdirs();
-        File customBossesDir = new File(getDataFolder(), "custom_bosses");
-        if (!customBossesDir.exists()) customBossesDir.mkdirs();
-        File customItemsDir = new File(getDataFolder(), "custom_items");
-        if (!customItemsDir.exists()) customItemsDir.mkdirs();
-        
-        saveResource("mounts/rideable_rocket.yml", false);
-        saveResource("pets/lamp.yml", false);
-        saveResource("custom_bosses/overworld_wither.json", false);
-        saveResource("custom_bosses/void_necromancer.json", false);
-        saveResource("custom_bosses/storm_archmage.json", false);
-        saveResource("custom_bosses/deep_dark_guardian.json", false);
-        saveResource("custom_mobs/infernal_pyromancer.json", false);
-        saveResource("custom_items/dimension_slicer.json", false);
-        saveResource("custom_items/world_war.json", false);
-        saveResource("custom_items/voidpiercer.json", false);
-        saveResource("custom_items/tempest_trident.json", false);
-
         // Load Custom Items and Recipes
         this.itemRegistry.loadConfig();
         
@@ -106,6 +117,8 @@ public class HereMobbyPlugin extends JavaPlugin {
         if (petLightTask != null) {
             petLightTask.cleanupAll();
         }
+        com.heremobby.heremobby.mob.goal.TerrainCycleGoal.restoreAll();
+        com.heremobby.heremobby.mob.goal.FloorIsLavaGoal.restoreAll();
         getLogger().info("HereMobby has been disabled!");
     }
 

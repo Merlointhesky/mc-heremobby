@@ -1,0 +1,28 @@
+{
+  "id": "harvest_witch",
+  "displayName": "§a§lHarvest Witch",
+  "baseType": "WITCH",
+  "scale": 4.0,
+  "maxHealth": 1500.0,
+  "defense": 0.45,
+  "kroinReward": 800,
+  "xpReward": 1000,
+  "spells": [
+    "TERRAIN_CYCLE",
+    "SUMMON_BABY_ZOMBIES",
+    "SAND_RAIN"
+  ],
+  "location": {
+    "world": "world",
+    "x": 929.0,
+    "y": 122.0,
+    "z": -2878.0
+  },
+  "respawnSeconds": 1800,
+  "customLoot": [
+    { "material": "harvest_scythe", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
+    { "material": "EMERALD", "minAmount": 5, "maxAmount": 15, "chance": 1.0 },
+    { "material": "GLOWSTONE_DUST", "minAmount": 4, "maxAmount": 12, "chance": 1.0 },
+    { "material": "REDSTONE", "minAmount": 8, "maxAmount": 24, "chance": 1.0 }
+  ]
+}

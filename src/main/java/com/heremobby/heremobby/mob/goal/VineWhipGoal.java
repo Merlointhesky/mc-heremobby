@@ -48,7 +48,7 @@ public class VineWhipGoal extends AbstractSpellGoal {
             
             pLoc.getNearbyEntities(0.8, 0.8, 0.8).forEach(e -> {
                 if (e instanceof LivingEntity le && le != boss) {
-                    le.damage(4.0, boss);
+                    le.damage(8.0, boss);
                     // Pull the target towards the boss
                     SpellUtils.applyVelocity(boss.getLocation(), le, -0.8);
                 }

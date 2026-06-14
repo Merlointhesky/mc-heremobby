@@ -1,0 +1,29 @@
+{
+  "id": "axe_warlord",
+  "displayName": "§6§lAxe Warlord",
+  "baseType": "PIGLIN",
+  "scale": 4.0,
+  "maxHealth": 2400.0,
+  "defense": 0.75,
+  "kroinReward": 1000,
+  "xpReward": 1200,
+  "spells": [
+    "THROW_AXE",
+    "SUMMON_WOLVES"
+  ],
+  "location": {
+    "world": "world",
+    "x": -639.0,
+    "y": 77.0,
+    "z": -1921.0
+  },
+  "respawnSeconds": 1800,
+  "equipment": {
+    "mainHand": "GOLDEN_AXE"
+  },
+  "customLoot": [
+    { "material": "warlords_might", "minAmount": 1, "maxAmount": 1, "chance": 1.0 },
+    { "material": "GOLD_BLOCK", "minAmount": 2, "maxAmount": 6, "chance": 1.0 },
+    { "material": "NETHERITE_SCRAP", "minAmount": 1, "maxAmount": 3, "chance": 0.5 }
+  ]
+}

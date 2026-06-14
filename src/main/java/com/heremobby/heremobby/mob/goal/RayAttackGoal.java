@@ -55,7 +55,7 @@ public class RayAttackGoal extends AbstractSpellGoal {
                     if (ticks % 10 == 0) {
                         pLoc.getNearbyEntities(0.5, 0.5, 0.5).forEach(e -> {
                             if (e instanceof LivingEntity le && le != boss && le == target) {
-                                le.damage(2.0, boss);
+                                le.damage(4.0, boss);
                                 boss.getWorld().playSound(le.getLocation(), Sound.ENTITY_GUARDIAN_ATTACK, 0.5f, 1.5f);
                             }
                         });
