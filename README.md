@@ -18,7 +18,7 @@ A [Paper](https://papermc.io) Minecraft plugin for **mob management** — manage
 
 ## Installation
 
-1. Grab `HereMobby-1.1.2.jar` from Releases (or `./gradlew build` locally).
+1. Grab `HereMobby-1.2.0.jar` from Releases (or `./gradlew build` locally).
 2. Drop the JAR in `plugins/`.
 3. Restart the server.
 
@@ -35,13 +35,13 @@ A [Paper](https://papermc.io) Minecraft plugin for **mob management** — manage
 The compiled plugin jar is written to:
 
 ```
-build/libs/HereMobby-1.1.2.jar
+build/libs/HereMobby-1.2.0.jar
 ```
 
-## Recent Changes (v1.1.1)
+## Recent Changes (v1.2.0)
 
 - **Added command alias `/hm`** — Players can now use `/hm` as a short alias for `/heremobby`.
-- **Version bump & clean build** — Bumped version to `1.1.1` to maintain consistency across all plugins.
+- **Version bump & clean build** — Bumped version to `1.2.0` to maintain consistency across all plugins.
 
 ## Commands & Permissions
 
@@ -68,10 +68,13 @@ Detailed documentation on configuration, custom mobs/bosses, and the spellcastin
 - `custom_items/`: Folder for custom item definitions.
 - `custom_mobs/`: Folder for new entity definitions.
 - `custom_bosses/`: Folder for static boss definitions.
+- `mounts/`: Folder for custom rideable mounts configurations.
+- `pets/`: Folder for custom companion pets configurations.
+- `wild_animals/`: Folder for custom wild animals configurations.
 
 ## Version
 
-Current release: **`1.1.2`**
+Current release: **`1.2.0`**
 
 ## License
 
