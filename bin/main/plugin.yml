@@ -6,7 +6,7 @@ softdepend: [HereShoppy]
 commands:
   heremobby:
     description: Main command for HereMobby
-    usage: /<command> [info|shop|reload]
+    usage: /<command> [info|shop|reload|setup|setupedit]
     aliases: [hm]
 permissions:
   heremobby.use:

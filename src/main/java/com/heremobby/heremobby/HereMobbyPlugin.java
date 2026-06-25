@@ -7,6 +7,7 @@ import com.heremobby.heremobby.gui.InfoListener;
 import com.heremobby.heremobby.listener.BossPoiseListener;
 import com.heremobby.heremobby.listener.MobListener;
 import com.heremobby.heremobby.listener.SpellListener;
+import com.heremobby.heremobby.listener.SetupWizardListener;
 import com.heremobby.heremobby.mob.MobManager;
 import com.heremobby.heremobby.framework.item.ItemRegistry;
 import com.heremobby.heremobby.framework.mount.MountListener;
@@ -85,6 +86,7 @@ public class HereMobbyPlugin extends JavaPlugin {
         pm.registerEvents(new InfoListener(), this);
         pm.registerEvents(new SpellListener(this), this);
         pm.registerEvents(new BossPoiseListener(this.mobManager), this);
+        pm.registerEvents(new SetupWizardListener(), this);
         
         // Register New Framework Listeners
         pm.registerEvents(new MountListener(), this);

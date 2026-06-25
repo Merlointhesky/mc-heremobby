@@ -29,20 +29,40 @@ public class CustomMob {
         return displayName;
     }
 
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     public String getBaseType() {
         return baseType;
+    }
+
+    public void setBaseType(String baseType) {
+        this.baseType = baseType;
     }
 
     public Equipment getEquipment() {
         return equipment;
     }
 
+    public void setEquipment(Equipment equipment) {
+        this.equipment = equipment;
+    }
+
     public SpawnConditions getSpawnConditions() {
         return spawnConditions;
     }
 
+    public void setSpawnConditions(SpawnConditions spawnConditions) {
+        this.spawnConditions = spawnConditions;
+    }
+
     public long getKroinReward() {
         return kroinReward;
+    }
+
+    public void setKroinReward(long kroinReward) {
+        this.kroinReward = kroinReward;
     }
 
     public int getXpReward() {
@@ -57,20 +77,40 @@ public class CustomMob {
         return scale;
     }
 
+    public void setScale(double scale) {
+        this.scale = scale;
+    }
+
     public double getMaxHealth() {
         return maxHealth;
+    }
+
+    public void setMaxHealth(double maxHealth) {
+        this.maxHealth = maxHealth;
     }
 
     public double getDefense() {
         return defense;
     }
 
+    public void setDefense(double defense) {
+        this.defense = defense;
+    }
+
     public List<LootItem> getCustomLoot() {
         return customLoot;
     }
 
+    public void setCustomLoot(List<LootItem> customLoot) {
+        this.customLoot = customLoot;
+    }
+
     public List<String> getSpells() {
         return spells;
+    }
+
+    public void setSpells(List<String> spells) {
+        this.spells = spells;
     }
 
     public static class Equipment {
@@ -82,11 +122,17 @@ public class CustomMob {
         private String boots;
 
         public String getMainHand() { return mainHand; }
+        public void setMainHand(String mainHand) { this.mainHand = mainHand; }
         public String getOffHand() { return offHand; }
+        public void setOffHand(String offHand) { this.offHand = offHand; }
         public String getHelmet() { return helmet; }
+        public void setHelmet(String helmet) { this.helmet = helmet; }
         public String getChestplate() { return chestplate; }
+        public void setChestplate(String chestplate) { this.chestplate = chestplate; }
         public String getLeggings() { return leggings; }
+        public void setLeggings(String leggings) { this.leggings = leggings; }
         public String getBoots() { return boots; }
+        public void setBoots(String boots) { this.boots = boots; }
     }
 
     public static class SpawnConditions {
@@ -97,10 +143,15 @@ public class CustomMob {
         private double chance;
 
         public List<String> getBiomes() { return biomes; }
+        public void setBiomes(List<String> biomes) { this.biomes = biomes; }
         public String getTime() { return time; }
+        public void setTime(String time) { this.time = time; }
         public int getMinLight() { return minLight; }
+        public void setMinLight(int minLight) { this.minLight = minLight; }
         public int getMaxLight() { return maxLight; }
+        public void setMaxLight(int maxLight) { this.maxLight = maxLight; }
         public double getChance() { return chance; }
+        public void setChance(double chance) { this.chance = chance; }
     }
 
     public static class LootItem {
@@ -110,8 +161,12 @@ public class CustomMob {
         private double chance;
 
         public String getMaterial() { return material; }
+        public void setMaterial(String material) { this.material = material; }
         public int getMinAmount() { return minAmount; }
+        public void setMinAmount(int minAmount) { this.minAmount = minAmount; }
         public int getMaxAmount() { return maxAmount; }
+        public void setMaxAmount(int maxAmount) { this.maxAmount = maxAmount; }
         public double getChance() { return chance; }
+        public void setChance(double chance) { this.chance = chance; }
     }
 }
